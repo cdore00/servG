@@ -1,0 +1,28 @@
+<html>
+<head>
+
+<script type="text/javascript"> 
+<!--
+
+function init(){
+var urlInfo = document.location.href;
+
+//alert(urlInfo.substring(urlInfo.indexOf("code=") + 5));
+if (urlInfo.indexOf("code=") == -1){
+	var url = window.location.href
+	var arr = url.split("/");
+	var URLresult = arr[0] + "//" + arr[2] + "/nod/default.html";
+	document.location.href = URLresult;
+}else{
+	sendCode(urlInfo.substring(urlInfo.indexOf("code=") + 5));
+	}
+}
+			
+// -->
+</script> 
+		
+</head>
+<body>
+<h1>Fichier vide</h1>
+</body>
+</html>

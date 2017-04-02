@@ -1,0 +1,47 @@
+<html>
+<head>
+
+<script type="text/javascript"> 
+<!--
+
+function sendCode(code){
+var request;
+var urlReq = "http://cdore.no-ip.biz:3000/nod/newCode?code=";
+
+//alert(code);
+urlReq += code;
+
+request = new XMLHttpRequest(); 
+request.open("GET", urlReq, true);
+request.onloadend = function(pe) {
+	var hInfo = document.getElementById("hInfo");
+	hInfo.innerHTML = "Commande re&ccedil;ue.";
+	//alert("From index");
+	}
+request.send();
+}
+
+function init(){
+var urlInfo = document.location.href;
+
+//alert(urlInfo.substring(urlInfo.indexOf("code=") + 5));
+if (urlInfo.indexOf("code=") == -1){
+	var url = window.location.href
+	var arr = url.split("/");
+	var URLresult = arr[0] + "//" + arr[2] + "/nod/default.html";
+	document.location.href = URLresult;
+}else{
+	sendCode(urlInfo.substring(urlInfo.indexOf("code=") + 5));
+	}
+}
+			
+// -->
+</script> 
+		
+</head>
+<body onload="init()">
+
+<h3 id="hInfo" style="color: #AD8700">Obtenir Token...</h3>
+
+</body>
+</html>

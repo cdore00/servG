@@ -26,7 +26,7 @@ var subNod = 'nod/';
 
 		if (req.method == 'POST') {
 			if (filePath == "listLog"){
-				listLog2(req, res);
+				tl.listLog2(req, res);
 			}else{
 				res.end();
 			}
@@ -40,10 +40,10 @@ var subNod = 'nod/';
 
 		}else{
 		if (filePath == "listLog"){
-			listLog(res, subNod);
+			tl.listLog(res, subNod);
 		}else{
 		if (filePath == "showLog"){
-			showLog(readQuery(req), res, subWeb);
+			tl.showLog(readQuery(req), res, subWeb);
 		}else{
 		if (filePath == "getRow"){
 			getSheetInfo(readQuery(req), res);
@@ -60,7 +60,7 @@ var subNod = 'nod/';
 // Démarrer l'écoute des requêtes au serveur
 	server.listen(port, hostname, () => {
 		console.log('Server started on port ' + port);
-		logFile('Server started on port ' + port);
+		tl.logFile('Server started on port ' + port);
 		authorize();   // Instancier l'objet OAuth2 pour les API Google.
 	});
 // FIN Serveur Web
@@ -140,9 +140,8 @@ var authObj;
 // at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://mail.google.com/',
     'https://www.googleapis.com/auth/gmail.send'];
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-var TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com-nodejs.json';
+var TOKEN_DIR = './credentials/';
+var TOKEN_PATH = TOKEN_DIR + 'googleapis-nodejs.json';
 
 function authorize(){
 // Load client secrets from a local file.
@@ -170,7 +169,7 @@ fs.readFile('./client_secret.json', function processClientSecrets(err, content) 
 	  auth2 = oauth2Client;
 	  laDate.setTime(oauth2Client.credentials.expiry_date);
 	  console.log(oauth2Client.credentials.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
-	  logFile("Token ending: " + oauth2Client.credentials.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
+	  tl.logFile("Token ending: " + oauth2Client.credentials.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
     }
 	if (auth2)
 		return true;
@@ -186,11 +185,11 @@ fs.readFile('./client_secret.json', function processClientSecrets(err, content) 
 function getNewToken(res) {
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
-			logFile(err.message);
+			tl.logFile(err.message);
 			throw err;
 		}else{
 			console.log('getNewToken');
-			logFile('getNewToken');
+			tl.logFile('getNewToken');
 			//debugger;
 			if (res){
 				res.statusCode = 200;
@@ -215,7 +214,7 @@ function storeToken(token) {
   }
   fs.writeFile(TOKEN_PATH, JSON.stringify(token));
   console.log('Token stored to ' + TOKEN_PATH);
-  logFile('Token stored');
+  tl.logFile('Token stored');
 }
 
 /**
@@ -291,11 +290,11 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
     if (err) { 
 		infoBup[infoBup.length] = infoG3;
 		console.log('Error cbWriteSheet: ' + err.message);
-		logFile('Error cbWriteSheet: ' + err.message);
+		tl.logFile('Error cbWriteSheet: ' + err.message);
 		getNewToken(res);  // For getting new TOKEN
 		return false;
     }else{  
-		logFile(JSON.stringify(infoVal));
+		tl.logFile(JSON.stringify(infoVal));
 		if (callBack)
 			callBack(infoBup);
 		return true;
@@ -323,7 +322,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		getNewToken(res);  // For getting new TOKEN
     }else{  
 		console.log("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
-		logFile("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
+		tl.logFile("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
 		res.statusCode = 200;
 		res.setHeader('Content-type', 'text/plain');
 		res.end(JSON.stringify(infoVal));
@@ -347,7 +346,7 @@ if (param.code != null){
 		console.log('Error while trying to retrieve access token', err.message);
 	  }else{
 	  laDate.setTime(token.expiry_date);
-	  logFile("Token ending: " + token.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
+	  tl.logFile("Token ending: " + token.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
 	  authObj.credentials = token;
 	  storeToken(token);
 	  //debugger;
@@ -370,7 +369,7 @@ function loadinfoBup(iBup){
 		iBup.splice(iBup.length-1, 1);
 	}
 	if (iBup.length != 0){
-		logFile("Récupération: " + iBup.length);
+		tl.logFile("Récupération: " + iBup.length);
 		writeToSheet(iBup[iBup.length-1], false, false, loadinfoBup);	
 	}
 }

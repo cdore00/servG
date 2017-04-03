@@ -3,15 +3,13 @@
 const fs = require('fs');
 const util = require('util');
 
-const MENU_XML_FILE = "menu.xml";
-var menuXML;
 
 // Log to file
 try{
 	const t1970 = Date.now();
 	const logFiler = fs.createWriteStream(__dirname + '/log/' + t1970 + '.log', {flags : 'w'});
 
-	logFile = function(d) {
+	exports.logFile = function(d) {
 	  var timeNow = Date().toLocaleString().substring(0,Date().toLocaleString().indexOf('GMT'));
 	  logFiler.write(timeNow + '\t' + util.format(d) + '\r\n');
 	};
@@ -20,7 +18,7 @@ try{
   }
 
 // List log file password
-listLog = function (res, subWeb) {
+exports.listLog = function (res, subWeb) {
 
 	//res.statusCode = 200;
 	//res.setHeader('Content-type', 'text/html');
@@ -30,12 +28,12 @@ listLog = function (res, subWeb) {
 }
 
 // List log file
-listLog2 = function (req, res) {
+exports.listLog2 = function (req, res) {
 
 //res.statusCode = 200;
 	req.on('data', function(data) {
 	var textChunk = data.toString('utf8');
-	textP = textChunk.replace("pass=","");
+	var textP = textChunk.replace("pass=","");
 	//console.log(textP + passW);
 		if (textP == passW){
 			var laDate = new Date();
@@ -43,7 +41,7 @@ listLog2 = function (req, res) {
 			fs.readdir("./log" , function(err, items) {
 				if(err){
 					console.log("Error listLog2: " + err.message);
-					logFile("Error listLog2: " + err.message);
+					this.logFile("Error listLog2: " + err.message);
 					//throw err;
 				}else{
 					for (var i=0; i<items.length; i++) {
@@ -60,20 +58,20 @@ listLog2 = function (req, res) {
 			});
 		}else{
 			//res.setHeader('Content-type', 'text/html', 'application/json; charset=utf-8');
-			logFile("Error listLog2 : " + textChunk);
+			this.logFile("Error listLog2 : " + textChunk);
 			res.end("<h2>Non autoris&eacute;</h2>");
 		}
 	});
 }
 
 // Show log file
-showLog = function (param, res) {
+exports.showLog = function (param, res) {
 	fs.readFile('log/' + param.InfoArr[3], (err, html) => {
 		if(err){
-			logFile("Error showLog: " + err.message);
+			this.logFile("Error showLog: " + err.message);
 			throw err;
 		}else{
-			logFile('Show log file: ' + param.InfoArr[2]);
+			this.logFile('Show log file: ' + param.InfoArr[2]);
 			if (res){
 				res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"})
 				res.write(html, 'utf8');
@@ -85,7 +83,7 @@ showLog = function (param, res) {
 
 
 // Send email
-//'use strict';
+'use strict';
 
 const bunyan = require('bunyan');
 const nodemailer = require('nodemailer');
@@ -94,7 +92,7 @@ var subject, toMail, passW;
 
   fs.readFile("mailInfo.json", function(err, jsonInfo) {  
     if (err) {
-		logFile('Error reading mailInfo.json : ', err.message);
+		this.logFile('Error reading mailInfo.json : ', err.message);
     }else {
 		var mailInfo = JSON.parse(jsonInfo);
 		subject = mailInfo.subject;
@@ -119,7 +117,7 @@ var subject, toMail, passW;
 
 // END define email transporter
 
-formatMailData = function (HOST, laDate, userName, userMail, updRange, m1arr, m3arr, m1Info, m3Info) {
+exports.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1arr, m3arr, m1Info, m3Info) {
 var formattedBody = "<p>Bonjour,</p><p>&nbsp;</p><p></br>Voici ma commande.</p><p>&nbsp;</p>";
 if (m1arr.length > 1){
 	formattedBody += "<p>" + m1arr[0] + "</p><ul>";
@@ -148,7 +146,7 @@ formattedBody + '<p><a href="' + modURL + '">Modifier ma commande</a></p>';
 return { url: modURL, Mbody: formattedBody };
 }
 
-sendMessage = function( res, userName, userMail, bodyMess, url) {
+exports.sendMessage = function( res, userName, userMail, bodyMess, url) {
 // Message object
 let message = {
 
@@ -170,7 +168,7 @@ transporter.sendMail(message, (error, info) => {
         console.log('Error occurred');
         console.log(error.message);
     }else{
-		logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
+		this.logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
 		console.log('Server responded with "%s"', info.response);
 		res.write('<h3 style="margin: 0;"><a target="_parent" href="' + url + '">Courriel envoyé</a></h3>');
 		res.end();  //JSON.stringify(infoVal)
@@ -184,7 +182,7 @@ transporter.sendMail(message, (error, info) => {
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var xhr = new XMLHttpRequest();
 
-getHTTP = function (filePath, req, res){
+exports.getHTTP = function (filePath, req, res){
 
 xhr.open("GET", filePath + "?_=" + new Date().getTime(), true);
 	xhr.onloadend=function(){

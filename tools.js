@@ -83,7 +83,7 @@ exports.showLog = function (param, res) {
 
 
 // Send email
-'use strict';
+//'use strict';
 
 const bunyan = require('bunyan');
 const nodemailer = require('nodemailer');
@@ -148,7 +148,7 @@ return { url: modURL, Mbody: formattedBody };
 
 exports.sendMessage = function( res, userName, userMail, bodyMess, url) {
 // Message object
-let message = {
+var message = {
 
     // Comma separated list of recipients
     to: toMail,

@@ -57,8 +57,15 @@ var subNod = 'nod/';
 		if (filePath == "app.js"){
 			writeToSheet(readQuery(req),req, res);
 			}else{ //Si req inconnue on annule
-				res.statusCode = 200;
-				res.end();
+				console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
+				var param = url_parts.query;
+				//console.log("Code= " + param.code);
+				if (param.code)
+					getNewCode(req, res, url_parts)
+				else{
+					res.statusCode = 200;
+					res.end();
+				}
 			}
 		}}}}}
 		} //Fin GET

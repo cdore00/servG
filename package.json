@@ -12,6 +12,10 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {},
+  "engine": {
+    "node": "*",
+    "npm": "*"
+  },
   "scripts": {
     "start": "node servG4.js",
     "test": "echo \"Error: no test specified\" && exit 1"

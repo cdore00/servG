@@ -264,7 +264,7 @@ if (req){
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
-			sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
 			}
 		});
 	}else{		// Append new
@@ -275,7 +275,7 @@ if (req){
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
-			sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
 			}
 		});
 	}	

@@ -41,7 +41,7 @@ exports.listLog2 = function (req, res) {
 			fs.readdir("./log" , function(err, items) {
 				if(err){
 					console.log("Error listLog2: " + err.message);
-					this.logFile("Error listLog2: " + err.message);
+					logFile("Error listLog2: " + err.message);
 					//throw err;
 				}else{
 					for (var i=0; i<items.length; i++) {
@@ -58,7 +58,7 @@ exports.listLog2 = function (req, res) {
 			});
 		}else{
 			//res.setHeader('Content-type', 'text/html', 'application/json; charset=utf-8');
-			this.logFile("Error listLog2 : " + textChunk);
+			logFile("Error listLog2 : " + textChunk);
 			res.end("<h2>Non autoris&eacute;</h2>");
 		}
 	});
@@ -68,10 +68,10 @@ exports.listLog2 = function (req, res) {
 exports.showLog = function (param, res) {
 	fs.readFile('log/' + param.InfoArr[3], (err, html) => {
 		if(err){
-			this.logFile("Error showLog: " + err.message);
+			logFile("Error showLog: " + err.message);
 			throw err;
 		}else{
-			this.logFile('Show log file: ' + param.InfoArr[2]);
+			logFile('Show log file: ' + param.InfoArr[2]);
 			if (res){
 				res.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"})
 				res.write(html, 'utf8');
@@ -92,7 +92,7 @@ var subject, toMail, passW;
 
   fs.readFile("mailInfo.json", function(err, jsonInfo) {  
     if (err) {
-		this.logFile('Error reading mailInfo.json : ', err.message);
+		logFile('Error reading mailInfo.json : ', err.message);
     }else {
 		var mailInfo = JSON.parse(jsonInfo);
 		subject = mailInfo.subject;
@@ -168,7 +168,7 @@ transporter.sendMail(message, (error, info) => {
         console.log('Error occurred');
         console.log(error.message);
     }else{
-		this.logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
+		logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
 		console.log('Server responded with "%s"', info.response);
 		res.write('<h3 style="margin: 0;"><a target="_parent" href="' + url + '">Courriel envoyé</a></h3>');
 		res.end();  //JSON.stringify(infoVal)

@@ -5,10 +5,15 @@ const Intl = require('intl');
 
 var ip;
 var url = require('url');
-//var qs = require('querystring');
-
+var port = 3000;
 const hostname = '';
-const port = 8080;
+
+//var qs = require('querystring');
+const args = process.argv;
+if (process.argv[2]){
+	console.log(args);
+	port = process.argv[2];
+}
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
@@ -24,16 +29,16 @@ var subNod = 'nod/';
 		var arrPath = url_parts.pathname.split("/");
 		var filePath = arrPath[arrPath.length - 1];
 		subWeb = arrPath[arrPath.length - 2] + '/';
-		console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 
 		if (req.method == 'POST') {
+			console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 			if (filePath == "listLog"){
 				tl.listLog2(req, res);
 			}else{
 				res.end();
 			}
 		}else{  // method == 'GET'
-			//console.log("res.statusCode = " + res.statusCode);
+			console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 		if (filePath == "newCode"){
 			getNewCode(req, res, url_parts);
 		}else{

@@ -24,7 +24,7 @@ exports.listLog = function (res, subWeb) {
 
 	//res.statusCode = 200;
 	//res.setHeader('Content-type', 'text/html');
-	var htmlCode = '<!DOCTYPE html><html lang="en-CA"><head><meta name="viewport" content="width=device-width" /></head><body><form action="/' + subWeb + 'listLog?" method="post"><input type="password" name="pass"></form></body></html>';
+	var htmlCode = '<!DOCTYPE html><html lang="en-CA"><head><meta name="viewport" content="width=device-width" /></head><body><form action="/listLog?" method="post"><input type="password" name="pass"></form></body></html>';
 	res.write(htmlCode);
 	res.end();
 }
@@ -92,9 +92,10 @@ const nodemailer = require('nodemailer');
 var transporter = null;
 var subject, toMail, passW;
 
-  fs.readFile("mailInfo.json", function(err, jsonInfo) {  
+exports.initMailer = function (PARAM_DIR) {
+  fs.readFile( PARAM_DIR + "mailInfo.json", function(err, jsonInfo) {  
     if (err) {
-		//this.logFile('Error reading mailInfo.json : ', err.message);
+		this.logFile('Error reading mailInfo.json : ', err.message);
     }else {
 		var mailInfo = JSON.parse(jsonInfo);
 		subject = mailInfo.subject;
@@ -116,7 +117,7 @@ var subject, toMail, passW;
 		});
 	}
   });
-
+}
 // END define email transporter
 
 exports.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1arr, m3arr, m1Info, m3Info) {

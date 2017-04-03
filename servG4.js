@@ -7,7 +7,8 @@ var url = require('url');
 //var qs = require('querystring');
 
 const hostname = '';
-const port = 8080;
+const port = 3000;
+const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
 tl = require('./tools.js');
@@ -62,6 +63,7 @@ var subNod = 'nod/';
 		console.log('Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
 		authorize();   // Instancier l'objet OAuth2 pour les API Google.
+		tl.initMailer(PARAM_DIR);
 	});
 // FIN Serveur Web
 
@@ -137,20 +139,18 @@ var gmail = google.gmail('v1');
 var authObj;
 
 // If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/sheets.googleapis.com-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://mail.google.com/',
     'https://www.googleapis.com/auth/gmail.send'];
-var TOKEN_DIR = './credentials/';
-var TOKEN_PATH = TOKEN_DIR + 'googleapis-nodejs.json';
+var TOKEN_PATH = PARAM_DIR + 'googleapis-nodejs.json';
 
 function authorize(){
 // Load client secrets from a local file.
-fs.readFile('./client_secret.json', function processClientSecrets(err, content) {
+fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err, content) {
   if (err) {
     console.log('Error loading client_secret.json: ' + err);
     return false;
   }
-  // Authorize a client with the loaded credentials, then call the Google Sheets API and console.log(TOKEN_DIR);
+  // Authorize a client with the loaded credentials, then call the Google Sheets API and console.log(PARAM_DIR);
   //authorize(JSON.parse(content), InfoArr, res);
   var cred = JSON.parse(content);
   var auth = new googleAuth();
@@ -206,7 +206,7 @@ function getNewToken(res) {
  */
 function storeToken(token) {
   try {
-    fs.mkdirSync(TOKEN_DIR);
+    fs.mkdirSync(PARAM_DIR);
   } catch (err) {
     if (err.code != 'EEXIST') {
       throw err;
@@ -214,7 +214,7 @@ function storeToken(token) {
   }
   fs.writeFile(TOKEN_PATH, JSON.stringify(token));
   console.log('Token stored to ' + TOKEN_PATH);
-  tl.logFile('Token stored');
+  tl.logFile('Token stored to ' + TOKEN_PATH);
 }
 
 /**
@@ -272,6 +272,7 @@ if (req){
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = tl.formatMailData(HOST, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			if (res){
+				//debugger;
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}

@@ -4,7 +4,6 @@
   "description": "Google server app",
   "main": "servG4.js",
   "dependencies": {
-    "bunyan": "^1.8.8",
     "body-parser": "^1.17.1",
     "google-auth-library": "^0.10.0",
     "googleapis": "^17.1.0",

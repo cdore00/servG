@@ -1,13 +1,14 @@
 // servG4.js    res.header("Content-Type", "application/json; charset=utf-8");
 const http = require('http');
 const fs = require('fs');
+const Intl = require('intl');
 
 var ip;
 var url = require('url');
 //var qs = require('querystring');
 
 const hostname = '';
-const port = 8080;
+const port = 3000;
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser

@@ -21,6 +21,7 @@ tl = require('./tools.js');
 var infoBup = new Array();
 var subWeb = '';
 var subNod = 'nod/';
+//console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 
 // Instancier le serveur Web
 	const server = http.createServer((req, res) => {
@@ -31,14 +32,12 @@ var subNod = 'nod/';
 		subWeb = arrPath[arrPath.length - 2] + '/';
 
 		if (req.method == 'POST') {
-			console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 			if (filePath == "listLog"){
 				tl.listLog2(req, res);
 			}else{
 				res.end();
 			}
 		}else{  // method == 'GET'
-			console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 		if (filePath == "newCode"){
 			getNewCode(req, res, url_parts);
 		}else{

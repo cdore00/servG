@@ -198,7 +198,7 @@ function getNewToken(res) {
     access_type: 'offline',
     scope: SCOPES
   });
-  tl.logFile('Authorize this app by visiting this url: ', authUrl);
+  tl.logFile('Authorize this app by visiting this url: ' + authUrl);
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);

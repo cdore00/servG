@@ -6,14 +6,19 @@ const Intl = require('intl');
 var ip;
 var url = require('url');
 var port = 3000;
-const hostname = '';
+
+var hostname = '';
+var hostURL = '';
 
 //var qs = require('querystring');
 const args = process.argv;
-if (process.argv[2]){
-	console.log(args);
-	port = process.argv[2];
+if (args[2] && args[2] == 3000){
+	port = args[2];
+	hostURL = 'http://cdore.no-ip.biz/nod/';
+}else{
+	hostURL = 'http://gserver-googleserv.44fs.preview.openshiftapps.com/';
 }
+	console.log(hostURL);
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
@@ -165,7 +170,7 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
   //authorize(JSON.parse(content), InfoArr, res);
   var cred = JSON.parse(content);
   var auth = new googleAuth();
-  var oauth2Client = new auth.OAuth2(cred.web.client_id, cred.web.client_secret, cred.web.redirect_uris[0]);
+  var oauth2Client = new auth.OAuth2(cred.web.client_id, cred.web.client_secret, hostURL);
   var laDate = new Date();
   var auth2 = false;
   

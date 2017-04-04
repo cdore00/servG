@@ -352,7 +352,7 @@ var laDate = new Date();
 var saveBup = ((infoBup.length > 0) ? true:false);
 
 if (param.code != null){
-	console.log(url_parts.pathname + "   getNewCode= " + param.code);
+	console.log(req.headers.host + "   getNewCode= " + param.code);
 	authObj.getToken(param.code, function(err, token) {
 	  if (err) {
 		console.log('Error while trying to retrieve access token: ', err.message);

@@ -352,10 +352,10 @@ var laDate = new Date();
 var saveBup = ((infoBup.length > 0) ? true:false);
 
 if (param.code != null){
-	console.log("   getNewCode= " + param.code);
+	console.log(url_parts.pathname + "   getNewCode= " + param.code);
 	authObj.getToken(param.code, function(err, token) {
 	  if (err) {
-		console.log('Error while trying to retrieve access token', err.message);
+		console.log('Error while trying to retrieve access token: ', err.message);
 	  }else{
 	  laDate.setTime(token.expiry_date);
 	  tl.logFile("Token ending: " + token.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));

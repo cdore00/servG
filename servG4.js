@@ -194,6 +194,11 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
  * Get and store new token after prompting for user authorization
  */
 function getNewToken(res) {
+  var authUrl = oauth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES
+  });
+  tl.logFile('Authorize this app by visiting this url: ', authUrl);
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);

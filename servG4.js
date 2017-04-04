@@ -57,9 +57,8 @@ var subNod = 'nod/';
 		if (filePath == "app.js"){
 			writeToSheet(readQuery(req),req, res);
 			}else{ //Si req inconnue on annule
-				console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
+				//console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 				var param = url_parts.query;
-				//console.log("Code= " + param.code);
 				if (param.code)
 					getNewCode(req, res, url_parts)
 				else{
@@ -353,7 +352,7 @@ var laDate = new Date();
 var saveBup = ((infoBup.length > 0) ? true:false);
 
 if (param.code != null){
-	console.log(param.code);
+	console.log("   getNewCode= " + param.code);
 	authObj.getToken(param.code, function(err, token) {
 	  if (err) {
 		console.log('Error while trying to retrieve access token', err.message);

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<!--<meta content="text/html; charset=windows-1252" http-equiv="Content-Type" />-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta name="contactcity" content="Quebec"/>
+<meta name="contactprovince" content="Quebec"/>
+<meta name="contactcountry" content="Canada"/>
+<title>Lou popote</title>
+<meta name="viewport" content="minimum-scale=1.0, width=device-width, user-scalable=yes" />
+
+<link href="favicon.ico" rel="icon" />
+<link rel="icon" href="misc/favicon.gif" type="image/gif" >
+
+<link rel="stylesheet" type="text/css" href="misc/init.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="misc/Jot.css" />
+<link id="pagestyle" rel="stylesheet" type="text/css" href="misc/photo.css" />
+
+<script type="text/javascript" src="misc/util.js"></script>
+
+<script type="text/javascript"> 
+<!--
+
+var metsCollection = null;
+var menuCollection = null;
+var cartCnt = 0;
+var progressBar;
+var commandeEnvoye = false;
+var updtInfo = null;
+var nodejsHost = "http://gserver-googleserv.44fs.preview.openshiftapps.com/";
+//"http://gserver-googleserv.44fs.preview.openshiftapps.com/";
+//"http://192.168.2.10:3000/lou/";
+//"http://cdore.no-ip.biz:3000/lou/";
+
+function loadMetsXML(){
+var divProgress = document.getElementById("divProgress");
+progressBar = document.getElementById("progress");
+progressBar.value = 0;
+divProgress.style.visibility="visible";
+
+var request = getXMLHttpRequest();
+
+if (request){ 
+	if (metsCollection == null){
+		document.body.style.cursor='wait';
+       try{
+			request.open("GET", "mets.xml?_=" + new Date().getTime(), true);
+		
+			  request.onprogress = function(pe) {
+				if(pe.lengthComputable) {
+				  //progressBar.max = pe.total;
+				  progressBar.value = pe.loaded / pe.total / 2;
+				}
+			  }
+			  request.onloadstart= function(pe) {
+				//progressBar.value = pe.loaded;
+			  }
+			  request.onloadend = function(pe) {
+			  	metsCollection = request.responseXML;
+				progressBar.value = 0.5;
+				loadMenuXML();
+				//divProgress.style.visibility="hidden";
+			  }
+            request.send();//here a xmlhttprequestexception number 101 is thrown 
+        }catch(err){
+			document.body.style.cursor='default';
+            alert("mets.xml non disponible: " + err.message);
+			divProgress.style.visibility="hidden";
+			return false;
+        }		
+	}
+}else
+	return false;
+
+}
+
+function loadMenuXML(){
+var divProgress = document.getElementById("divProgress"); 
+menuCollection = null;
+
+var request = getXMLHttpRequest();
+
+if (request){
+	if (menuCollection == null){
+		document.body.style.cursor='wait';
+       try{
+			request.open("GET", "menu.xml?_=" + new Date().getTime(), true);
+		
+			  request.onprogress = function(pe) {
+				if(pe.lengthComputable) {
+				  //progressBar.max = pe.total;
+				  progressBar.value = 0.5 + (pe.loaded / pe.total / 2);
+				}
+			  }
+			  request.onloadstart= function(pe) {
+				//progressBar.value = pe.loaded;
+			  }
+			  request.onloadend = function(pe) {
+			  	menuCollection = request.responseXML;
+				progressBar.value = 1;
+				afficheMenu(menuCollection);
+				divProgress.style.visibility="hidden";
+			  }
+            request.send();//here a xmlhttprequestexception number 101 is thrown 
+        }catch(err){
+            alert("menu.xml non disponible: " + err.message);
+			divProgress.style.visibility="hidden";
+			return false;
+        }		
+	}
+}else
+	return false;
+document.body.style.cursor='default';
+}
+
+function afficheMenu(menuColl){
+var liv1 = document.getElementById('liv1');
+var liv3 = document.getElementById('liv3');
+var cartliv1 = document.getElementById('cartliv1');
+var cartliv3 = document.getElementById('cartliv3');
+var menu1 = document.getElementById('menu1');
+var menu3 = document.getElementById('menu3');
+
+liv1.textContent = menuColl.childNodes[0].childNodes[1].childNodes[1].textContent;
+cartliv1.textContent = liv1.textContent;
+liv3.textContent = menuColl.childNodes[0].childNodes[1].childNodes[5].textContent;
+cartliv3.textContent = liv3.textContent;
+afficheMenuLiv(1, menu1, menuColl.childNodes[0].childNodes[3], menuColl.childNodes[0].childNodes[7]);
+afficheMenuLiv(3, menu3, menuColl.childNodes[0].childNodes[5], menuColl.childNodes[0].childNodes[7]);
+
+if (updtInfo)  // Mise à jour d'une commande envoyée
+	loadCommande();
+}
+
+function afficheMenuLiv(jour, menuLiv, menuLivColl, menuXColl){
+var cnt = 1;
+//Menu lundi ou mercredi
+for(var i = 1; i < menuLivColl.childNodes.length; i += 2){
+	if (menuLivColl.childNodes[i].childNodes[1].textContent != "" || menuLivColl.childNodes[i].childNodes[3].textContent != ""){
+		//alert(menuLivColl.childNodes[i].childNodes[1].textContent + " - " + menuLivColl.childNodes[i].childNodes[3].textContent);
+		ajouterMenu(jour, menuLiv, menuLivColl.childNodes[i].childNodes[1].textContent, menuLivColl.childNodes[i].childNodes[3].textContent, menuLivColl.childNodes[i].childNodes[5].textContent, menuLivColl.childNodes[i].childNodes[7].textContent, cnt);
+		cnt ++;
+	}
+	}
+// Menu lundi et mercredi
+for(var i = 1; i < menuXColl.childNodes.length; i += 2){
+	if (menuXColl.childNodes[i].childNodes[1].textContent != "" || menuXColl.childNodes[i].childNodes[3].textContent != ""){
+		//alert(menuXColl.childNodes[i].childNodes[1].textContent + " - " + menuXColl.childNodes[i].childNodes[3].textContent);
+		ajouterMenu(jour, menuLiv, menuXColl.childNodes[i].childNodes[1].textContent, menuXColl.childNodes[i].childNodes[3].textContent, menuXColl.childNodes[i].childNodes[5].textContent, menuXColl.childNodes[i].childNodes[7].textContent, cnt);
+		cnt ++;
+	}
+	}
+}
+
+function ajouterMenu(jour, menuLiv, mets, desc, prix, lien, id){
+var itemCode;
+// Si c'est un mets du fichier mets.XML
+if (mets != ""){
+	var plat = metsCollection.getElementsByTagName(mets);
+	if (desc == "")
+		desc = plat[0].childNodes[3].childNodes[0].nodeValue;
+	if (prix == "")
+		prix = plat[0].childNodes[5].childNodes[0].nodeValue;
+	if (lien == "")
+		lien = "photos/" + plat[0].childNodes[1].childNodes[0].nodeValue;
+	else
+		lien = "photos/" + lien;
+	}
+// Ajouter le mets au menu de la livraison
+var liElem = document.createElement("li");
+if (mets != ""){
+	itemCode = '<a href="#" class="menuPlat" title="Cliquer pour voir le mets" onclick="expansion(this, \'' + btoa(lien) + '\', \'' + btoa(desc) + '\', \'' + prix + ' $\'); return false;">' + desc + '&#8239;' + prix + '$</a>&#8239;';
+	}else{
+	itemCode = '<span class="menuPlat">' + desc + '&#8239;' + prix + '$</span>&#8239;';
+	}
+itemCode = itemCode + '<a class="ajouterCart" title="Ajouter au panier" href="#" onclick="ajouterPanier(' + jour + ',\'' + btoa(desc) + '\',\'' + prix + '\', this.parentNode,' + id + ');return false;">Ajouter</a>';
+liElem.innerHTML = itemCode;
+menuLiv.appendChild(liElem);
+//<span class="menuPlat">Pain de viande et pur�e de patates douces 8$</span>&#8239;
+}
+
+function hideShow(){
+var showPhoto = document.getElementById('showPhoto');
+var objImg = document.getElementById('objImg');
+var imgDesc = document.getElementById('imgDesc');
+
+	showPhoto.style.visibility="hidden";
+	//objImg.style.transitionDuration = "0s";
+	imgDesc.innerHTML = '';
+	objImg.src = "";
+	objImg.style.maxWidth  = '150px';
+}
+
+function expansion(obj, photoName, desc, prix){
+var showPhoto = document.getElementById('showPhoto');
+var objImg = document.getElementById('objImg');
+var imgDesc = document.getElementById('imgDesc');
+var objImgMaxWidth
+
+	objImg.style.transitionDuration = "0.4s";
+	objImg.src = "misc/spin.gif";
+	//obj.scrollIntoView (true);
+	showPhoto.style.top = document.body.scrollTop + 'px';
+	showPhoto.style.left = '5px';
+
+	showPhoto.style.visibility="visible";
+	objImg.src=atob(photoName);
+	objImg.style.maxWidth = (getWindowWidth() - 10) + 'px';
+	imgDesc.innerHTML = atob(desc) + '<p class="dimen">' + prix + '</p>';
+}
+
+function ajouterPanier(jour, descMets, prixMets, Oli, id){
+var cart_count = document.getElementById('cart-count');
+cartContent.addChoice(jour, atob(descMets), prixMets, id);
+cartCnt++;
+cart_count.innerHTML = cartCnt;
+// Pour d�clencher animation
+Oli.childNodes[0].classList.remove("zoomOutUp");
+void Oli.childNodes[0].offsetWidth;
+Oli.childNodes[0].classList.add("zoomOutUp");
+}
+
+// Define cartContent Object
+var cartContent = {
+    // setup properties of cartContent object
+    id:"cartContent",
+    listeChoix : new Array()
+}
+
+cartContent.addChoice = function (jour, desc, prix, id) {
+	this.listeChoix[this.listeChoix.length] = new addMets(jour, desc, prix, id);
+}
+
+function addMets(jour, desc, prix, id){
+this.jour=jour;
+this.desc=desc;
+this.prix=prix;
+this.id=id;
+this.deleted=false;
+}
+// End Define cartContent Object
+
+function showCart(){
+var divCart = document.getElementById('divCart');
+var cartTitle = document.getElementById('cartTitle');
+var f_nom = document.getElementById('f_nom');
+
+if (divCart.style.width == "100%"){
+divCart.style.webkitTransition  = "";
+transitionsSupported = false;
+	divCart.style.width="100%";
+	divCart.style.height="100%";
+	divCart.style.top="0px";
+	divCart.style.left="0px";
+	divCart.style.visibility="visible";
+	divCart.className = "noTrans";
+	alert(divCart.style.webkitTransition);
+return true;
+}
+
+//alert("Transition");
+
+if (transitionsSupported)  //util.js
+	divCart.style.webkitTransition  = "0.3s";
+
+getInfo();
+if (!commandeEnvoye)
+	refreshCart();
+	
+divCart.style.visibility="visible";
+divCart.style.width="100%";
+divCart.style.height="100%";
+divCart.style.top="0px";
+divCart.style.left="0px";
+//divCart.style.opacity=1;
+if (f_nom.value == "")
+	f_nom.focus();
+else
+	document.getElementById("subEmail").focus();
+setTimeout("cartTitle.scrollIntoView();", 400);
+//divCart.style.zIndex = 2000;
+	
+}
+
+function refreshCart(){
+var jour1 = document.getElementById('jour1');
+var jour3 = document.getElementById('jour3');
+var subEmail = document.getElementById('subEmail');
+var liv1 = document.getElementById('liv1');
+var liv3 = document.getElementById('liv3');
+var formattedBody = "Bonjour, \n\nVoici ma commande \n";
+
+//Supprimer les �l�ments actuels
+for(var i = 0; i < jour1.childNodes.length; i++){
+	jour1.removeChild(jour1.childNodes[0]);
+}
+for(var i = 0; i < jour3.childNodes.length; i++){
+	jour3.removeChild(jour3.childNodes[0]);
+}
+//Afficher les �l�ments de l'objet cartContent
+formattedBody = formattedBody + "\n" + liv1.innerHTML + "\n";
+var ulElem = document.createElement("ul");
+for(var i = 0; i < cartContent.listeChoix.length; i++){
+	if (!cartContent.listeChoix[i].deleted && cartContent.listeChoix[i].jour == 1 ){
+		var liElem = document.createElement("li");
+		var strMets = cartContent.listeChoix[i].desc + ", " + cartContent.listeChoix[i].prix + "$";
+		//desc + ", " + prix + "$"; getMets(cartContent.listeChoix[i].desc);
+		liElem.innerHTML = strMets + '&#8239;<img class="deleteCart" src="misc/delete.png" title="Retirer du panier" alt="' + i + '" onclick="deleteItem(this);"/>';
+		ulElem.appendChild(liElem);
+		formattedBody = formattedBody + "- " + strMets + "\n";
+	}
+	jour1.appendChild(ulElem);
+}
+formattedBody = formattedBody + "\n" + liv3.innerHTML + "\n";
+var ulElem = document.createElement("ul");
+for(var i = 0; i < cartContent.listeChoix.length; i++){
+	if (!cartContent.listeChoix[i].deleted && cartContent.listeChoix[i].jour == 3 ){
+		var liElem = document.createElement("li");
+		var strMets = cartContent.listeChoix[i].desc + ", " + cartContent.listeChoix[i].prix + "$";
+		liElem.innerHTML = strMets + '&#8239;<img src="misc/delete.png" title="Retirer du panier" alt="' + i + '" onclick="deleteItem(this);"/>';
+		ulElem.appendChild(liElem);
+		formattedBody = formattedBody + "- " + strMets + "\n";
+	}
+	jour3.appendChild(ulElem);
+}
+// Formatter le courriel de commande
+formattedBody = formattedBody + "\n" + GetCookie('cartAdresse');
+formattedBody = formattedBody + "\n\nMerci,\n\n" + GetCookie('cartNom');
+subEmail.href = "mailto: lou@loupopote.com?Subject=Commande Lou popote&body=" + encodeURIComponent(formattedBody);
+
+}
+
+function closeCart(){
+var menuCart = document.getElementById('menu-cart');
+var divCart = document.getElementById('divCart');
+var	posMenu = posObj(menuCart);
+
+divCart.style.top= posMenu.y + 60 + "px";
+divCart.style.left= posMenu.x + 60 + "px";
+divCart.style.width="0%";
+divCart.style.height="0%";
+saveInfo();
+setTimeout("divCart.style.visibility='hidden';", 300);
+}
+
+function saveInfo(){
+var f_nom = document.getElementById('f_nom');
+var f_adresse = document.getElementById('f_adresse');
+var f_courriel = document.getElementById('f_courriel');
+
+SetCook('cartNom', f_nom.value);
+SetCook('cartAdresse', f_adresse.value);
+SetCook('cartMail', f_courriel.value);
+}
+
+function getInfo(returnInfo){
+var f_nom = document.getElementById('f_nom');
+var f_adresse = document.getElementById('f_adresse');
+var f_courriel = document.getElementById('f_courriel');
+
+f_nom.value = GetCookie('cartNom');
+f_adresse.value = GetCookie('cartAdresse');
+f_courriel.value = GetCookie('cartMail');
+if (returnInfo){
+	return "app.js?nam=" + encodeURIComponent(f_nom.value) + "&adr=" + encodeURIComponent(f_adresse.value) + "&em=" + encodeURIComponent(f_courriel.value);
+}
+}
+
+function deleteItem(aObj){
+var cart_count = document.getElementById('cart-count');
+cartCnt = cartCnt - 1;
+cart_count.innerHTML = cartCnt;
+cartContent.listeChoix[aObj.alt].deleted = true;
+refreshCart();
+}
+
+function subCommForm(deleteCommand){
+var boutonsAjouter = document.querySelectorAll(".ajouterCart");
+var boutonsDelete = document.querySelectorAll(".deleteCart");
+
+if (deleteCommand){
+	if (!confirm("Supprimer cette commande ?"))
+		return false;
+}
+
+if (commandeEnvoye){
+	alert("Cette commanda a déjà été envoyée.\nFermeture du panier...");
+	closeCart();
+}else{
+	saveInfo();
+	if (submitForm(deleteCommand)){
+		for (var i = 0; i < boutonsAjouter.length; i++) {
+			boutonsAjouter[i].style.visibility = "hidden";
+		}
+		for (var i = 0; i < boutonsDelete.length; i++) {
+			boutonsDelete[i].style.display = "none";
+		}
+		commandeEnvoye = true;
+	}
+}
+}
+
+function subProgress(){
+
+progressBar.value = progressBar.value + 0.05;
+
+if (progressBar.value >= 1){
+	var divProgress = document.getElementById("divProgress");
+	divProgress.style.visibility="hidden";	
+	}else{
+	setTimeout("subProgress();", 50);}
+}
+
+
+function submitForm(deleteCommand){
+var cartliv1 = document.getElementById('cartliv1');
+var cartliv3 = document.getElementById('cartliv3');
+var frameInfo = document.getElementById('frameInfo');
+var cart = cartContent.listeChoix;
+var mailInfoJ1 = "&L1=" + cartliv1.innerHTML;
+var mailInfoJ3 = "&L3=" + cartliv3.innerHTML;
+var strCom = "";
+var rangeInfo = "";
+
+if (checkInfo()){
+	var divProgress = document.getElementById("divProgress");
+	frameInfo.style.display = "inherit";
+	closeCart(true);
+	progressBar.max = 1;
+	progressBar.value = .05;
+	divProgress.style.visibility="visible";
+	subProgress();
+	for (var i = 0; i < cart.length; i++){
+			if (deleteCommand)
+				cart[i].deleted = true;
+			if (!cart[i].deleted){
+				strCom += "&J" + cart[i].jour + "" + cart[i].id + "=" + encodeURIComponent(cart[i].desc);
+				if (cart[i].jour == 1){
+					mailInfoJ1 += "$" + cart[i].jour + "*" + cart[i].id;
+				}
+				if (cart[i].jour == 3){
+					mailInfoJ3 += "$" + cart[i].jour + "*" + cart[i].id;
+				}
+			}
+		}
+	if (deleteCommand){
+		var cart_count = document.getElementById('cart-count');
+		refreshCart();
+		cartCnt = 0;
+		cart_count.innerHTML = cartCnt;
+		}
+	if (updtInfo)
+		rangeInfo = "&range=" + updtInfo;
+	strCom = nodejsHost + getInfo(true) + strCom + rangeInfo + mailInfoJ1 + mailInfoJ3;
+	//oldSub(strCom);
+	frameInfo.src = strCom;
+	return true;
+}else{
+	return false;
+}
+}
+
+function oldSub(strCom){
+
+xhr = getXMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+//	var subComm = document.getElementById('subComm');
+//	subComm.innerHTML = 'Commande envoy&eacute;e' + text;
+//	subComm.style.webkitAnimationPlayState = "running";
+    alert('Response from CORS request to : ' + text);
+  };
+	xhr.open("GET", strCom, true);
+	//xhr.setRequestHeader("Content-Type", "application/json");
+	//xhr.setRequestHeader("Access-Control-Allow-Origin:", "*");
+	xhr.send(null);	
+}
+
+function loadedIframe(objIframe){
+var frameInfo = document.getElementById('frameInfo');
+var divProgress = document.getElementById("divProgress");
+var url = frameInfo.src;
+
+if (url.indexOf("vide.html") == -1){
+//alert("iFrame URL=" + frameInfo.src);
+	}
+}
+
+function validEmail(email){
+	var emailReg = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+	var valid = emailReg.test(email);
+
+	if(valid) 
+        return true;
+     else 
+    	return false;
+}
+
+function initPageMenu(){
+var dialogBox = document.getElementById('dialogBox');
+var divframeInfo = document.getElementById('divframeInfo');
+var urlInfo = document.location.href;
+if (urlInfo.indexOf("rang=") != -1){  // Modifier une commande
+	updtInfo = urlInfo.substring(urlInfo.indexOf("rang=") + 5);
+	}
+	
+if (typeof HTMLDialogElement !== 'function') {
+		dialogBox.style.visibility="hidden";
+	} 
+
+var ifElem = document.createElement("iframe");
+ifElem.setAttribute('id', 'frameInfo');	
+ifElem.setAttribute('src', 'vide.html');
+ifElem.setAttribute('onload','loadedIframe(this);');
+divframeInfo.appendChild(ifElem);
+
+initPage();
+menuList.addEventListener("animationend", updateAnimation, true);
+loadMetsXML();
+//alert(performance.navigation.type);
+}
+
+var updateAnimation = function(e){
+if (e.animationName == "slidein"){
+	var menuList = document.getElementById('menuList');
+	menuList.className = "listItem-gallery";
+	menuList.style.webkitAnimationName = "";
+}
+//alert(e.animationName);
+}
+
+function loadCommande(){
+var J_nom = document.getElementById('f_nom');
+var J_adresse = document.getElementById('f_adresse');
+var J_courriel = document.getElementById('f_courriel');
+var menu1 = document.getElementById('menu1');
+var menu3 = document.getElementById('menu3');
+var url = window.location.href
+var arr = url.split("/");
+var urlParam = updtInfo.split("$");
+	
+getInfo();
+
+for (var i = 3; i < urlParam.length; i++) {
+	var arrInfo = urlParam[i].split("*");
+	if (arrInfo[0] == 1)
+		var menuJ = menu1;
+	if (arrInfo[0] == 3)
+		var menuJ = menu3;
+	var cntLI = 1;
+	for (var m = 0; m < menuJ.childNodes.length; m++) {
+		if (menuJ.childNodes[m].tagName == "LI"){
+			if (arrInfo[1] == cntLI){
+				menuJ.childNodes[m].childNodes[2].click();
+				break;
+				}
+			cntLI += 1;
+		}
+	}
+}
+	updtInfo = decodeURIComponent(urlParam[0]);
+	cartTitle.innerHTML = cartTitle.innerHTML + '<p class="smallF">Soumis: ' + decodeURIComponent(urlParam[2]) + '</p>';
+	showCart();
+}
+
+function checkInfo(){
+//Le cart est vide
+if ( cartCnt == 0 ){
+	if (typeof HTMLDialogElement === 'function') {
+			var divMessage = document.getElementById('divMessage');
+			divMessage.innerHTML = "<p>Votre panier est vide.</p><p> Ajoutez des items avec le bouton «Ajouter».</p></br>";
+			dialogBox.showModal();
+		} else {
+		  alert("Votre panier est vide. Ajoutez des items avec le bouton «Ajouter».");
+		}
+closeCart();
+return false;
+}
+//Les informations ne sont pas complètes
+if (f_nom.value=="" || f_adresse.value=="" || f_courriel.value==""){
+	if (typeof HTMLDialogElement === 'function') {
+			var divMessage = document.getElementById('divMessage');
+			var leMessage = "<p>Les informations suivantes sont manquantes:</p><ul>"
+			if (f_nom.value=="")
+				leMessage += "<li>Prénom nom</li>";
+			if (f_adresse.value=="")
+				leMessage += "<li>Adresse</li>";
+			if (f_courriel.value=="")
+				leMessage += "<li>Courriel</li>";				
+			leMessage += "</ul>Ces informations sont nécessaires et seront conservé dans le formulaire pour votre prochaine commande.";
+			divMessage.innerHTML = leMessage + "</br></br>";
+			dialogBox.showModal();
+		} else {
+		  alert("Les informations: Prénom nom, Adresse et Courriel sont nécessaires et seront conservé dans le formulaire pour votre prochaine commande.");
+		}
+return false;
+}
+// Courriel invalide
+if (!validEmail(f_courriel.value)){  
+	if (typeof HTMLDialogElement === 'function') {
+			var divMessage = document.getElementById('divMessage');
+			var leMessage = "<p>L'adresse de courriel n'est pas valide</p>"
+			divMessage.innerHTML = leMessage + "</br>";
+			dialogBox.showModal();
+		} else {
+		  alert("L'adresse de courriel n'est pas valide.");
+		}
+return false;
+}
+return true;
+}
+
+// -->
+</script> 
+</head>
+
+<body onload="initPageMenu();">
+
+
+<div id="entete">
+
+<h1>Lou popote</h1>
+<div id="louIcon"><img id="loupopoteIcon" alt="Icone lou popote" src="misc/favicon.gif" /></div>
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="misc/taille.png" /></button>
+</div>
+
+<div id="divmenu">
+<ul>
+	<li>
+	<a href="index.html">Accueil</a>
+	</li>
+	<li>
+	<a id="ancPhoto" class="selOpt" href="#">Menu</a>   
+	</li>
+	<li>
+	<a href="photos.html">Photos</a>
+	</li>
+	<li>
+	<a href="joindre.html">Nous joindre</a>
+	</li>
+</ul>
+</div>
+
+<div id="content">
+
+<h2>Menu</h2>
+
+<h3>Lou popote</h3>
+
+<span class="titreMenu">Les livraisons sont effectu&eacute;es en fin d'apr&egrave;s-midi. Faites votre choix avant dimanche 11h &agrave; <a href="mailto:lou@loupopote.com?Subject=Site&nbsp;Lou&nbsp;popote">lou@loupopote.com</a>! Miam!</span>
+
+<div>
+<input id="inputObj" type="hidden" value='<%= comInfo %>'/>
+<div id="menu-cart" class="tooltip" onclick="showCart()">
+<span id="cart-count">0</span>
+<span class="tooltiptext">Afficher le panier</span>
+<div id="over-menu-cart">
+
+</div>
+</div>
+
+</div>
+<div id="divProgress">
+<progress id="progress" >0</progress>
+</div>
+<div id="divframeInfo">
+<!--  <iframe id="frameInfo" src="vide.html" onload="loadedIframe(this); return false;">
+</iframe> // -->
+</div>
+<div id="menuList" class="listItem-gallery slidein">
+<ul>
+	<li>
+		<span id="liv1" class="titreMenu">lundi</span>
+		<div class="itemDesc">
+		<ul id="menu1">
+			<!--  ajouterMenu(jour, menuLiv, mets, desc, prix, lien)   // -->
+		</ul>
+		</div>
+	</li>
+
+	<li>
+	<span id="liv3" class="titreMenu">mercredi</span>
+		<div class="itemDesc">
+		<ul id="menu3">
+			<!--  ajouterMenu(jour, menuLiv, mets, desc, prix, lien)   // -->
+		</ul>
+		</div>
+	</li>
+
+</ul>
+	
+				
+</div>
+
+
+</div>  <!--End content // -->
+
+<div id="piedPage">
+<div>
+<p id="copyright"><a href="mailto:lou@loupopote.com?Subject=Site&nbsp;Lou&nbsp;popote">Tous droits r&eacute;serv&eacute;s: Lou popote 2016</a></p>
+</div>
+</div>
+
+<div id="showPhoto"  title="Cliquer pour fermer" onclick="hideShow()">
+<div id="imgArea">
+<table class="noborder">
+<tr><td><img id="objImg"  src="misc/spin.gif" title="Cliquer pour fermer" alt=""/></td></tr><tr><td><div id="imgDesc"></div></td></tr>
+</table></div></div>
+
+<div id="divCart" class="cartTrans">
+<a href="javascript:closeCart()" title="Close" class="closeModal">X</a>
+<h1 id="cartTitle">Votre panier</h1>
+<form id="cartForm" action="#">
+ <p><label for="f_nom">&nbsp;Pr&eacute;nom Nom&nbsp;:&nbsp;</label>&nbsp;<input  id="f_nom" type="text" placeholder="Pr&eacute;nom Nom" value=""/>&nbsp;</p>
+ <p><label for="f_adresse">&nbsp;Adresse&nbsp;:&nbsp;</label>&nbsp;<input id="f_adresse" type="text" placeholder="No, rue, app, code postal" value=""/>&nbsp;</p>
+ <p><label for="f_courriel">&nbsp;Courriel&nbsp;:&nbsp;</label>&nbsp;<input id="f_courriel" type="email" placeholder="utilisateur@xxxxx.yyy" value=""/>&nbsp;</p>
+</form>
+<div id="cart-content">
+<ul>
+	<li>
+		<span id="cartliv1" class="titreMenu">Livraison de lundi:</span>
+		<div class="itemDesc itemDescCart">
+		<div id="jour1">
+
+		</div>
+		</div>
+
+		<span id="cartliv3" class="titreMenu">Livraison de mercredi:</span>
+		<div class="itemDesc itemDescCart">
+		<div id="jour3">
+
+		</div>
+		</div>
+	</li>
+	
+</ul>
+</div>
+
+<div>
+<a id="subCommand" class="cart-button" title="Soumettre automatiquement" href="javascript:subCommForm();" >&nbsp;Soumettre&nbsp;</a>
+<a id="subEmail" class="cart-button" title="Soumettre par courriel..." href="mailto:louise@loupopote.com">&nbsp;Courriel&nbsp;</a>
+<a id="subDelete" class="cart-button" title="Supprimer la commande" href="javascript:subCommForm(true);" >&nbsp;Supprimer&nbsp;</a>
+<a class="cart-button" title="Fermer" href="javascript:closeCart();">&nbsp;&nbsp;&nbsp;Fermer&nbsp;&nbsp;&nbsp;</a>
+</div>
+
+
+</div>
+	<dialog id="dialogBox"> 
+		<div id="divMessage"></div>
+		<button class="cart-button" onclick="dialogBox.close()">Fermer</button>
+		<a href="javascript:dialogBox.close()" title="Close" class="closeModal">X</a>
+	</dialog>
+ </body>	 
+ </html>

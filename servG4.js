@@ -9,6 +9,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
+var HOSTclient = 'http://cdore.no-ip.biz/';
 
 //var qs = require('querystring');
 const args = process.argv;
@@ -259,14 +260,6 @@ if (rangeInfo != ""){
 infoG3.InfoArr[6] = typInfo;
 var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 
-if (req){
-	var HOST = req.headers.host;
-	if (HOST.indexOf(":") != -1)
-		HOST = HOST.substring( 0, HOST.indexOf(":") );
-}else{
-	var HOST = "gserver-googleserv.44fs.preview.openshiftapps.com";
-}
-
   try {
 	var sheets = google.sheets('v4');
 	var options = {
@@ -283,7 +276,7 @@ if (req){
 		options.range = rangeInfo.substring(0, rangeInfo.indexOf(":")) ;
 	sheets.spreadsheets.values.update(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = tl.formatMailData(HOST, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			if (res){
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
@@ -294,7 +287,7 @@ if (req){
 	}else{		// Append new
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = tl.formatMailData(HOST, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			if (res){
 				//debugger;
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });

@@ -261,9 +261,11 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 
 if (req){
 	var HOST = req.headers.host;
-	HOST = HOST.substring( 0, HOST.indexOf(":") );
-}else
-	var HOST = "cdore.no-ip.biz";
+	if (HOST.indexOf(":") != -1)
+		HOST = HOST.substring( 0, HOST.indexOf(":") );
+}else{
+	var HOST = "gserver-googleserv.44fs.preview.openshiftapps.com";
+}
 
   try {
 	var sheets = google.sheets('v4');

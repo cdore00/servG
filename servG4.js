@@ -9,7 +9,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'http://cdore.no-ip.biz';
+var HOSTclient = 'cdore.no-ip.biz';
 
 //var qs = require('querystring');
 const args = process.argv;

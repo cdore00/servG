@@ -143,7 +143,7 @@ if (m3arr.length > 1){
 	m3Info = "";
 
 formattedBody += "<p>&nbsp;</p><p>Merci,</p><p>" + userName + "</p><p>&nbsp;</p>";
-var modURL = 'http://' + HOST + '/lou/menu.html?rang=' + updRange + '$' + userMail + '$' + laDate + m1Info + m3Info ;
+var modURL = 'http://' + HOST + '/menu.html?rang=' + updRange + '$' + userMail + '$' + laDate + m1Info + m3Info ;
 formattedBody + '<p><a href="' + modURL + '">Modifier ma commande</a></p>';
 
 return { url: modURL, Mbody: formattedBody };

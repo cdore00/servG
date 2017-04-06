@@ -173,8 +173,10 @@ transporter.sendMail(message, (error, info) => {
     }else{
 		this.logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
 		console.log('Server responded with "%s"', info.response);
-		res.write('<h3 style="margin: 0;"><a target="_parent" href="' + url + '">Courriel envoyé</a></h3>');
-		res.end();  //JSON.stringify(infoVal)
+		if (res){
+			res.write('<h3 style="margin: 0;"><a target="_parent" href="' + url + '">Courriel envoyé</a></h3>');
+			res.end();  //JSON.stringify(infoVal)
+		}
 	}
     transporter.close();
 });

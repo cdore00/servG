@@ -10,17 +10,18 @@ var port = 3000;
 var hostname = '';
 var hostURL = '';
 var HOSTclient = 'cdore00.000webhostapp.com';
+//'cdore00.000webhostapp.com';
 
 //var qs = require('querystring');
 const args = process.argv;
 if (args[2] && args[2] == 3000){
 	port = args[2];
-	hostURL = 'http://cdore00.000webhostapp.com/';
+	hostURL = 'http://cdore.no-ip.biz/nod/';
 }else{
 	var port = 8080;
 	hostURL = 'http://gserver-googleserv.44fs.preview.openshiftapps.com/';
 }
-	console.log(hostURL);
+console.log(hostURL + " args[20]=" + args[0] + " args[1]=" + args[1]);
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
@@ -288,6 +289,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			//debugger;
 			if (res){
 				//debugger;
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -309,7 +311,8 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
 		infoBup[infoBup.length] = infoG3;
 		console.log('Error cbWriteSheet: ' + err.message);
 		tl.logFile('Error cbWriteSheet: ' + err.message);
-		getNewToken(res);  // For getting new TOKEN
+		if (err.message == 'invalid_request')
+			getNewToken(res);  // For getting new TOKEN
 		return false;
     }else{  
 		tl.logFile(JSON.stringify(infoVal));

@@ -15,7 +15,7 @@ var HOSTclient = 'cdore.no-ip.biz';
 const args = process.argv;
 if (args[2] && args[2] == 3000){
 	port = args[2];
-	hostURL = 'http://cdore.no-ip.biz/nod/';
+	hostURL = 'http://cdore00.000webhostapp.com/';
 }else{
 	var port = 8080;
 	hostURL = 'http://gserver-googleserv.44fs.preview.openshiftapps.com/';
@@ -201,11 +201,11 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
  * Get and store new token after prompting for user authorization
  */
 function getNewToken(res) {
-  var authUrl = authObj.generateAuthUrl({
+/**  var authUrl = authObj.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
   });
-  tl.logFile('Authorize this app by visiting this url: ' + authUrl);
+  tl.logFile('Authorize this app by visiting this url: ' + authUrl);   */
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);

@@ -289,7 +289,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
-			//debugger;
+			debugger;
 			if (res){
 				//debugger;
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });

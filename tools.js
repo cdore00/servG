@@ -161,9 +161,9 @@ var message = {
     // plaintext body
     //text: 'Hello to myself!',
     // HTML body
-    html: bodyMess,
+    html: bodyMess + '<a target="_parent" href="' + url + '">Modifier ma commande</a>',
     // Apple Watch specific HTML body
-    watchHtml: bodyMess 
+    watchHtml: bodyMess + '<a target="_parent" href="' + url + '">Modifier ma commande</a>'
 };
 //console.log('Sending Mail...');  // + message.html
 transporter.sendMail(message, (error, info) => {

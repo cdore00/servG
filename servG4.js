@@ -279,7 +279,8 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			if (res){
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
+				//res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
 			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
@@ -292,7 +293,11 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 			debugger;
 			if (res){
 				//debugger;
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
+				//res.setHeader("Access-Control-Allow-Origin", "*");
+				//res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+				//res.setHeader({ 'Content-Type': 'text/html; charset=utf-8' });
+				//res.statusCode = 200;
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
 			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);

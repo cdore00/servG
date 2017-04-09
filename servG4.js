@@ -11,6 +11,8 @@ var hostname = '';
 var hostURL = '';
 var HOSTclient = 'cdore00.000webhostapp.com';
 //'cdore00.000webhostapp.com';
+//'http://cdore.no-ip.biz/lou/';
+
 
 //var qs = require('querystring');
 const args = process.argv;

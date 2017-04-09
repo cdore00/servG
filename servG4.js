@@ -9,10 +9,10 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'cdore00.000webhostapp.com';
+var HOSTclient = 'http://cdore.no-ip.biz/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
-
+//https://rawgit.com/cdore00/lou/master/
 
 //var qs = require('querystring');
 const args = process.argv;

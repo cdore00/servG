@@ -12,8 +12,8 @@ var hostURL = '';
 var HOSTclient = 'http://cdore.no-ip.biz/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
-//https://rawgit.com/cdore00/lou/master/
-//http://192.168.2.10/lou/
+//'https://rawgit.com/cdore00/lou/master/'
+//'http://192.168.2.10/lou/'
 // Pour les mails
 
 //var qs = require('querystring');

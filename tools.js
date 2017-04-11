@@ -71,7 +71,8 @@ exports.showLog = function (param, res) {
 	fs.readFile('log/' + param.InfoArr[3], (err, html) => {
 		if(err){
 			this.logFile("Error showLog: " + err.message);
-			throw err;
+			res.end();
+			//throw err;
 		}else{
 			this.logFile('Show log file: ' + param.InfoArr[2]);
 			if (res){

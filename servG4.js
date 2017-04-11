@@ -26,7 +26,7 @@ if (args[2] && args[2] == 3000){
 	hostURL = 'https://sslgserver-googleserv.44fs.preview.openshiftapps.com/';
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
-console.log(process.env.MAIL);
+console.log(process.env.MAIL + process.env.INFO);
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser

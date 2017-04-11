@@ -25,7 +25,8 @@ if (args[2] && args[2] == 3000){
 	var port = 8080;
 	hostURL = 'https://sslgserver-googleserv.44fs.preview.openshiftapps.com/';
 }
-console.log(hostURL + " args[20]=" + args[0] + " args[1]=" + args[1]);
+console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
+console.log(process.env.MAIL);
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser

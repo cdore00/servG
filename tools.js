@@ -91,10 +91,10 @@ exports.showLog = function (param, res) {
 //const bunyan = require('bunyan');
 const nodemailer = require('nodemailer');
 var transporter = null;
-var subject, toMail, passW;
+var subject, toMail, userM, passW;
 
 exports.initMailer = function (PARAM_DIR) {
-console.log(process.env.MAIL + " Pass= " + process.env.INFO);
+//console.log(process.env.MAIL + " Pass= " + process.env.INFO);
   fs.readFile( PARAM_DIR + "mailInfo.json", function(err, jsonInfo) {  
     if (err) {
 		this.logFile('Error reading mailInfo.json : ', err.message);
@@ -102,13 +102,21 @@ console.log(process.env.MAIL + " Pass= " + process.env.INFO);
 		var mailInfo = JSON.parse(jsonInfo);
 		subject = mailInfo.subject;
 		toMail = mailInfo.to;
+//debugger;
+		if (process.env.MAIL){
+			userM = process.env.MAIL;
+			passW = process.env.INFO;
+		}else{
+			userM = mailInfo.user;
+			passW = mailInfo.pass;
+		}
 		passW = mailInfo.pass;
 		// Create a SMTP transporter object
 		transporter = nodemailer.createTransport({
 			service: 'Gmail',
 			auth: {
-				user: mailInfo.user,
-				pass:  mailInfo.pass
+				user: userM,
+				pass: passW
 			}
 		}, {
 			// sender info

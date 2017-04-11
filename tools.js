@@ -94,7 +94,7 @@ var transporter = null;
 var subject, toMail, userM, passW;
 
 exports.initMailer = function (PARAM_DIR) {
-//console.log(process.env.MAIL + " Pass= " + process.env.INFO);
+console.log(process.env.MAIL + " Pass= " + process.env.INFO);
   fs.readFile( PARAM_DIR + "mailInfo.json", function(err, jsonInfo) {  
     if (err) {
 		this.logFile('Error reading mailInfo.json : ', err.message);
@@ -110,7 +110,6 @@ exports.initMailer = function (PARAM_DIR) {
 			userM = mailInfo.user;
 			passW = mailInfo.pass;
 		}
-		passW = mailInfo.pass;
 		// Create a SMTP transporter object
 		transporter = nodemailer.createTransport({
 			service: 'Gmail',

@@ -9,7 +9,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'http://192.168.2.10/lou/';
+var HOSTclient = 'https://rawgit.com/cdore00/lou/master/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';

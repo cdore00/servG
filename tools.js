@@ -93,7 +93,7 @@ var transporter = null;
 var subject, toMail, userM, passW;
 
 exports.initMailer = function (PARAM_DIR) {
-//console.log(process.env.MAIL + " Pass= " + process.env.INFO);
+console.log(process.env.MAIL + " Pass= " + process.env.INFO);
   fs.readFile( PARAM_DIR + "mailInfo.json", function(err, jsonInfo) {  
     if (err) {
 		this.logFile('Error reading mailInfo.json : ', err.message);

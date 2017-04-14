@@ -26,7 +26,7 @@ if (args[2] && args[2] == 3000){
 	hostURL = 'https://sslgserver-googleserv.44fs.preview.openshiftapps.com/';
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
-//console.log(process.env.MAIL + process.env.INFO);
+
 const PARAM_DIR = './param/';
 
 // tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
@@ -254,16 +254,7 @@ var InfoArr = infoG3.InfoArr;
 var m1Info = infoG3.m1info;
 var m3Info = infoG3.m3info;
 var rangeInfo = infoG3.InfoArr[6];
-var typInfo = "";
 
-if (rangeInfo != ""){
-	if (m1Info.indexOf('$') == -1 && m3Info.indexOf('$') == -1)
-		typInfo = "Supprimé";
-	else
-		typInfo = "Modifié";
-}
-//debugger;
-infoG3.InfoArr[6] = typInfo;
 var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 
   try {
@@ -297,11 +288,6 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			debugger;
 			if (res){
-				//debugger;
-				//res.setHeader("Access-Control-Allow-Origin", "*");
-				//res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-				//res.setHeader({ 'Content-Type': 'text/html; charset=utf-8' });
-				//res.statusCode = 200;
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}

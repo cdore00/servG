@@ -192,8 +192,8 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
       oauth2Client.credentials = JSON.parse(token);
 	  auth2 = oauth2Client;
 	  laDate.setTime(oauth2Client.credentials.expiry_date);
-	  console.log(oauth2Client.credentials.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
-	  tl.logFile("Token ending: " + oauth2Client.credentials.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
+	  console.log(oauth2Client.credentials.expiry_date + " = " + tl.getDateTime(laDate));
+	  tl.logFile("Token ending: " + oauth2Client.credentials.expiry_date + " = " + tl.getDateTime(laDate));
     }
 	if (auth2)
 		return true;
@@ -363,8 +363,8 @@ if (param.code != null){
 		console.log('Error while trying to retrieve access token: ', err.message);
 	  }else{
 	  laDate.setTime(token.expiry_date);
-	  tl.logFile("Token ending: " + token.expiry_date + " = " + laDate.toLocaleString("en-CA", {hour12: false}));
 	  authObj.credentials = token;
+	  tl.logFile("Token ending: " + token.expiry_date + " = " + tl.getDateTime(laDate));
 	  storeToken(token);
 	  //debugger;
 	  if (infoBup.length != 0){

@@ -2,7 +2,21 @@
 'use strict';
 const fs = require('fs');
 const util = require('util');
+var timeZoneAjust = 0;
+if (process.env.TIME_AJUST)
+	timeZoneAjust = process.env.TIME_AJUST;
 
+// Return America/New-York Time zone dateTime (yyyy-mm-dd hh:mm:ss)
+exports.getDateTime = function (dateTime){
+	var timeNow ;
+	if (dateTime)
+		timeNow = dateTime;
+	else
+		timeNow = new Date();
+		
+	timeNow.setUTCHours(timeNow.getUTCHours() - timeZoneAjust);
+	return timeNow.toLocaleString();
+}
 
 // Log to file
 try{
@@ -10,8 +24,7 @@ try{
 	const logFiler = fs.createWriteStream(__dirname + '/log/' + t1970 + '.log', {flags : 'w'});
 
 	exports.logFile = function(d) {
-	  var timeNow = Date().toLocaleString().substring(0,Date().toLocaleString().indexOf('GMT'));
-	  logFiler.write(timeNow + '\t' + util.format(d) + '\r\n');
+	  logFiler.write(this.getDateTime() + '\t' + util.format(d) + '\r\n');
 	};
   }catch(err){
 	  console.log(err);

@@ -3,8 +3,8 @@
 const fs = require('fs');
 const util = require('util');
 var timeZoneAjust = 0;
-if (process.env.TIME_AJUST)
-	timeZoneAjust = process.env.TIME_AJUST;
+//if (process.env.TIME_AJUST)
+//	timeZoneAjust = process.env.TIME_AJUST;
 
 // Return America/New-York Time zone dateTime (yyyy-mm-dd hh:mm:ss)
 exports.getDateTime = function (dateTime){

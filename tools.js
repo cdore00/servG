@@ -2,20 +2,26 @@
 'use strict';
 const fs = require('fs');
 const util = require('util');
+const Intl = require('intl');
+
 var timeZoneAjust = -1;
 if (process.env.TIME_AJUST)
 	timeZoneAjust = eval(process.env.TIME_AJUST);
 
+var options = { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"};
+var dt =  new Intl.DateTimeFormat("fr-CA", options);
+
 // Return America/New-York Time zone dateTime (yyyy-mm-dd hh:mm:ss)
 exports.getDateTime = function (dateTime){
-	var NYDateTime ;
+	var intlDateTime ;
 	if (dateTime)
-		NYDateTime = dateTime;
+		intlDateTime = dateTime;
 	else
-		NYDateTime = new Date();
-		
-	NYDateTime.setUTCHours(NYDateTime.getUTCHours() + timeZoneAjust);
-	return NYDateTime.toLocaleString();
+		intlDateTime = new Date();
+	
+	intlDateTime.setUTCHours(intlDateTime.getUTCHours() + timeZoneAjust);
+	dt.format(intlDateTime);
+	return intlDateTime.toLocaleString();
 }
 
 // Log to file
@@ -163,8 +169,8 @@ if (m3arr.length > 1){
 	m3Info = "";
 
 formattedBody += "<p>&nbsp;</p><p>Merci,</p><p>" + userName + "</p><p>&nbsp;</p>";
+formattedBody += '<a href="' + modURL + '">Modifier ma commande</a>';
 var modURL = HOST + 'menu.html?rang=' + updRange + '$' + userMail + '$' + laDate + m1Info + m3Info ;
-formattedBody + '<p><a href="' + modURL + '">Modifier ma commande</a></p>';
 
 return { url: modURL, Mbody: formattedBody };
 }
@@ -181,9 +187,9 @@ var message = {
     // plaintext body
     //text: 'Hello to myself!',
     // HTML body
-    html: bodyMess + '<a target="_parent" href="' + url + '">Modifier ma commande</a>',
+    html: bodyMess ,
     // Apple Watch specific HTML body
-    watchHtml: bodyMess + '<a target="_parent" href="' + url + '">Modifier ma commande</a>'
+    watchHtml: bodyMess 
 };
 //console.log('Sending Mail...');  // + message.html
 transporter.sendMail(message, (error, info) => {

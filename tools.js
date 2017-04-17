@@ -2,7 +2,7 @@
 'use strict';
 const fs = require('fs');
 const util = require('util');
-var timeZoneAjust = 0;
+var timeZoneAjust = -1;
 if (process.env.TIME_AJUST)
 	timeZoneAjust = eval(process.env.TIME_AJUST);
 
@@ -14,7 +14,7 @@ exports.getDateTime = function (dateTime){
 	else
 		NYDateTime = new Date();
 		
-	NYDateTime.setUTCHours(NYDateTime.getUTCHours() - timeZoneAjust);
+	NYDateTime.setUTCHours(NYDateTime.getUTCHours() + timeZoneAjust);
 	return NYDateTime.toLocaleString();
 }
 
@@ -42,10 +42,9 @@ exports.listLog = function (res, subWeb) {
 	res.end();
 }
 
-// List log file
+// List log files
 exports.listLog2 = function (req, res) {
 
-//res.statusCode = 200;
 	req.on('data', function(data) {
 	var textChunk = data.toString('utf8');
 	var textP = textChunk.replace("pass=","");

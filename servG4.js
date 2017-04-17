@@ -1,4 +1,5 @@
 // servG4.js 
+// Google API server for Sheets (V4) and Gmail (V2)
 const http = require('http');
 const fs = require('fs');
 const Intl = require('intl');
@@ -14,7 +15,7 @@ var HOSTclient = 'https://rawgit.com/cdore00/lou/master/';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';
 //'http://192.168.2.10/lou/';
-// Pour les mails
+// For hyperlink in mails ans user Web pages.
 
 const args = process.argv;
 if (args[2] && args[2] == 3000){
@@ -33,7 +34,7 @@ var infoBup = new Array();
 var subWeb = '';
 var subNod = 'nod/';
 
-// Instancier le serveur Web
+// Instantiate Web Server
 	const server = http.createServer((req, res) => {
 			//debugger;
 		var url_parts = url.parse(req.url,true);
@@ -66,12 +67,12 @@ var subNod = 'nod/';
 		}else{
 		if (filePath == "app.js"){
 			writeToSheet(readQuery(req),req, res);
-			}else{ //Si req inconnue on annule
+			}else{ 
 				//console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 				var param = url_parts.query;
-				if (param.code)
+				if (param.code)  // New code received to obtain Token
 					getNewCode(req, res, url_parts)
-				else{
+				else{  //Cancel unknow request
 					res.statusCode = 200;
 					res.end("<h1>Received</h1>");
 				}
@@ -79,14 +80,14 @@ var subNod = 'nod/';
 		}}}}}
 		} //Fin GET
 	});
-// Démarrer l'écoute des requêtes au serveur
+// Start server listening request
 	server.listen(port, hostname, () => {
 		console.log('Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
-		authorize();   // Instancier l'objet OAuth2 pour les API Google.
+		authorize();   // Instantiate OAuth2 object for Google API.
 		tl.initMailer(PARAM_DIR);
 	});
-// FIN Serveur Web
+// END Web Server
 
 
 // Parse received Request
@@ -121,16 +122,16 @@ InfoArr[InfoArr.length] = ((param.adr != null) ? param.adr:"" ) ;
 InfoArr[InfoArr.length] = ((param.em != null) ? param.em:"" ) ;
 InfoArr[InfoArr.length] = ((param.range != null) ? param.range:"" ) ;
 
-for (var j = 1; j < 4; j += 2) {  // Jour 1 lundi, jour 3 = mercredi
+for (var j = 1; j < 4; j += 2) {  // Day 1 monday, day 3 = wednesday
 	for (var i = 1; i < 10; i++) {
 		var tmpVal = eval("param.J" + j + "" + i);
 		tmpVal = ((tmpVal != null) ? tmpVal:"" );
-		if(typeof tmpVal == 'object'){  // Valeur multiple
+		if(typeof tmpVal == 'object'){  // Multiple value
 			for (var z = 0; z < tmpVal.length; z++) {
 				InfoArr[InfoArr.length] = tmpVal[z];
 				mailInfo(M1, M3, j, tmpVal[z]);
 			}
-		}else{  // Valeur unique
+		}else{  // One value
 			InfoArr[InfoArr.length] = tmpVal;
 			mailInfo(M1, M3, j, tmpVal);
 		}
@@ -140,6 +141,7 @@ for (var j = 1; j < 4; j += 2) {  // Jour 1 lundi, jour 3 = mercredi
 return { InfoArr: InfoArr, m1: M1, m3: M3, m1info: param.L1, m3info: param.L3 };
 }
 
+// Add choice for mail
 function mailInfo(M1, M3, jour, valInfo){
 if (valInfo){
 	if (jour == 1)
@@ -201,14 +203,15 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
 }
 
 /**
- * Get and store new token after prompting for user authorization
+ * Get and store new token for user authorization
  */
 function getNewToken(res) {
 /**  var authUrl = authObj.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
   });
-  tl.logFile('Authorize this app by visiting this url: ' + authUrl);   */
+  tl.logFile('Authorize this app by visiting this url: ' + authUrl);   
+ That allways same URL stoked in getCode.html */
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);
@@ -216,7 +219,6 @@ function getNewToken(res) {
 		}else{
 			console.log('getNewToken');
 			tl.logFile('getNewToken');
-			//debugger;
 			if (res){
 				res.statusCode = 200;
 				res.setHeader('Content-type', 'text/html');
@@ -244,7 +246,7 @@ function storeToken(token) {
 }
 
 /**
- * Write to Sheet
+ * Write to Google SheetID
  */
 function writeToSheet(infoG3, req, res, callBack) {
 var InfoArr = infoG3.InfoArr;
@@ -364,7 +366,6 @@ if (param.code != null){
 	  authObj.credentials = token;
 	  tl.logFile("Token ending: " + token.expiry_date + " = " + tl.getDateTime(laDate));
 	  storeToken(token);
-	  //debugger;
 	  if (infoBup.length != 0){
 		 writeToSheet(infoBup[infoBup.length-1], req, res, loadinfoBup);
 	  }

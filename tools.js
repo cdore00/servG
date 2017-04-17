@@ -8,14 +8,14 @@ if (process.env.TIME_AJUST)
 
 // Return America/New-York Time zone dateTime (yyyy-mm-dd hh:mm:ss)
 exports.getDateTime = function (dateTime){
-	var timeNow ;
+	var NYDateTime ;
 	if (dateTime)
-		timeNow = dateTime;
+		NYDateTime = dateTime;
 	else
-		timeNow = new Date();
+		NYDateTime = new Date();
 		
-	timeNow.setUTCHours(timeNow.getUTCHours() + timeZoneAjust);
-	return timeNow.toLocaleString();
+	NYDateTime.setUTCHours(NYDateTime.getUTCHours() - timeZoneAjust);
+	return NYDateTime.toLocaleString();
 }
 
 // Log to file
@@ -23,8 +23,8 @@ try{
 	const t1970 = Date.now();
 	const logFiler = fs.createWriteStream(__dirname + '/log/' + t1970 + '.log', {flags : 'w'});
 
-	exports.logFile = function(d) {
-	  logFiler.write(this.getDateTime() + '\t' + util.format(d) + '\r\n');
+	exports.logFile = function(data) {
+	  logFiler.write(this.getDateTime() + '\t' + util.format(data) + '\r\n');
 	};
   }catch(err){
 	  console.log(err);

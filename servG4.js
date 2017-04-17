@@ -1,4 +1,4 @@
-// servG4.js    res.header("Content-Type", "application/json; charset=utf-8");
+// servG4.js 
 const http = require('http');
 const fs = require('fs');
 const Intl = require('intl');
@@ -16,7 +16,6 @@ var HOSTclient = 'https://rawgit.com/cdore00/lou/master/';
 //'http://192.168.2.10/lou/';
 // Pour les mails
 
-//var qs = require('querystring');
 const args = process.argv;
 if (args[2] && args[2] == 3000){
 	port = args[2];
@@ -29,12 +28,10 @@ console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=
 
 const PARAM_DIR = './param/';
 
-// tools.js (logging fct) module fs, util, bunyan, nodemailer, DOMParser
 tl = require('./tools.js');
 var infoBup = new Array();
 var subWeb = '';
 var subNod = 'nod/';
-//console.log(url_parts.pathname + " subWeb= " + subWeb + " filePath= " + filePath);
 
 // Instancier le serveur Web
 	const server = http.createServer((req, res) => {
@@ -99,10 +96,10 @@ var M1 = new Array();
 var M3 = new Array();
 //console.log(url_parts);
 if (param.L1){
-var M1info = param.L1.split("$"); 
-var M3info = param.L3.split("$");
-M1[M1.length] = M1info[0];
-M3[M3.length] = M3info[0];
+	var M1info = param.L1.split("$"); 
+	var M3info = param.L3.split("$");
+	M1[M1.length] = M1info[0];
+	M3[M3.length] = M3info[0];
 }
 
 	if (req.headers['x-forwarded-for']) {
@@ -115,10 +112,7 @@ M3[M3.length] = M3info[0];
 
 console.log(url_parts.query);
 InfoArr[InfoArr.length] = Date.now();
-var options = { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"};
-var dt =  new Intl.DateTimeFormat("fr-CA", options);
-InfoArr[InfoArr.length] = dt.format(new Date());
-//Date().toLocaleString().substring(0,Date().toLocaleString().indexOf('GMT'));
+InfoArr[InfoArr.length] = tl.getDateTime(); //dt.format(new Date());
 InfoArr[InfoArr.length] = ip ;	
 InfoArr[InfoArr.length] = ((param.nam != null) ? param.nam:"" ) ;
 InfoArr[InfoArr.length] = ((param.adr != null) ? param.adr:"" ) ;
@@ -162,6 +156,7 @@ var gmail = google.gmail('v1');
 
 var authObj;
 
+const sheetID = "1B6seaxE--ew4wLVbjT6H4Peub8rKMDFBQL_9CZpmNe0";
 // If modifying these scopes, delete your previously saved credentials
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://mail.google.com/',
     'https://www.googleapis.com/auth/gmail.send'];
@@ -261,7 +256,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 	var sheets = google.sheets('v4');
 	var options = {
 	  auth: authObj,
-	  spreadsheetId: "1B6seaxE--ew4wLVbjT6H4Peub8rKMDFBQL_9CZpmNe0",
+	  spreadsheetId: sheetID,
 	  range: "Feuille 1!A1",
 	  valueInputOption: "RAW",
 	  resource: {	  
@@ -329,7 +324,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 	var sheets = google.sheets('v4');
 	var options = {
 	  auth: authObj,
-	  spreadsheetId: "1B6seaxE--ew4wLVbjT6H4Peub8rKMDFBQL_9CZpmNe0",
+	  spreadsheetId: sheetID,
 	  range: InfoArr[2]
 	};  
 	sheets.spreadsheets.values.get(options, function(err, result) {
@@ -351,6 +346,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
   }
 }  
 
+// Get new Token with new code received
 function getNewCode(req, res, url_parts){
 var param = url_parts.query;
 var laDate = new Date();
@@ -380,7 +376,8 @@ if (!saveBup){
 }
 
 }
- 
+
+// Pass cumulated requests waiting token
 function loadinfoBup(iBup){
 	if (iBup.length != 0){
 		iBup.splice(iBup.length-1, 1);

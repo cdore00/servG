@@ -88,6 +88,8 @@ var subNod = 'nod/';
 	});
 // FIN Serveur Web
 
+
+// Parse received Request
 function readQuery(req){
 var url_parts = url.parse(req.url,true);
 var param = url_parts.query;
@@ -112,7 +114,7 @@ if (param.L1){
 
 console.log(url_parts.query);
 InfoArr[InfoArr.length] = Date.now();
-InfoArr[InfoArr.length] = tl.getDateTime(); //dt.format(new Date());
+InfoArr[InfoArr.length] = tl.getDateTime(); 
 InfoArr[InfoArr.length] = ip ;	
 InfoArr[InfoArr.length] = ((param.nam != null) ? param.nam:"" ) ;
 InfoArr[InfoArr.length] = ((param.adr != null) ? param.adr:"" ) ;
@@ -187,7 +189,7 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
       oauth2Client.credentials = JSON.parse(token);
 	  auth2 = oauth2Client;
 	  laDate.setTime(oauth2Client.credentials.expiry_date);
-	  console.log(oauth2Client.credentials.expiry_date + " = " + tl.getDateTime(laDate));
+	  console.log("Token ending: " + oauth2Client.credentials.expiry_date + " = " + tl.getDateTime(laDate));
 	  tl.logFile("Token ending: " + oauth2Client.credentials.expiry_date + " = " + tl.getDateTime(laDate));
     }
 	if (auth2)

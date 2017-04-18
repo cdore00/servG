@@ -4,7 +4,7 @@ const fs = require('fs');
 const util = require('util');
 const Intl = require('intl');
 
-var timeZoneAjust = -1;
+var timeZoneAjust = 0;
 if (process.env.TIME_AJUST)
 	timeZoneAjust = eval(process.env.TIME_AJUST);
 
@@ -20,7 +20,7 @@ exports.getDateTime = function (dateTime){
 		intlDateTime = new Date();
 	
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours() + timeZoneAjust);
-	dt.format(intlDateTime);
+	intlDateTime = dt.format(intlDateTime);
 	return intlDateTime.toLocaleString();
 }
 

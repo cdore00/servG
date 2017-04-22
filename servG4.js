@@ -9,10 +9,10 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'https://rawgit.com/cdore00/lou/master/';
+var HOSTclient = 'https://cdore00.github.io/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
-//'https://rawgit.com/cdore00/lou/master/';
+//'https://cdore00.github.io/lou/';
 //'http://192.168.2.10/lou/';
 // For hyperlink in mails ans user Web pages.
 

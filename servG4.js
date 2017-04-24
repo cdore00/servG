@@ -29,6 +29,9 @@ console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=
 const PARAM_DIR = './param/';
 
 tl = require('./tools.js');
+const Mailer = require('./mailer.js');
+//const Mailer = new Mail;
+
 var infoBup = new Array();
 var subWeb = '';
 var subNod = 'nod/';
@@ -43,7 +46,7 @@ var subNod = 'nod/';
 
 		if (req.method == 'POST') {
 			if (filePath == "listLog"){
-				tl.listLog2(req, res);
+				tl.listLog2(req, res, Mailer.pass);
 			}else{
 				res.end();
 			}
@@ -84,7 +87,7 @@ var subNod = 'nod/';
 		console.log('Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
 		authorize();   // Instantiate OAuth2 object for Google API.
-		tl.initMailer(PARAM_DIR);
+		Mailer.initMailer(Mailer,PARAM_DIR);  // Initialyse Mailer Object
 	});
 // END Web Server
 
@@ -173,7 +176,6 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
     return false;
   }
   // Authorize a client with the loaded credentials, then call the Google Sheets API and console.log(PARAM_DIR);
-  //authorize(JSON.parse(content), InfoArr, res);
   var cred = JSON.parse(content);
   var auth = new googleAuth();
   var oauth2Client = new auth.OAuth2(cred.web.client_id, cred.web.client_secret, hostURL);
@@ -271,25 +273,25 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		options.range = rangeInfo.substring(0, rangeInfo.indexOf(":")) ;
 	sheets.spreadsheets.values.update(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			if (res){
 				//res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
-			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
 			}
 		});
 	}else{		// Append new
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = tl.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
 			debugger;
 			if (res){
 				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
 			}
-			tl.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
 			}
 		});
 	}	
@@ -300,6 +302,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
   }
 }
 
+// Manage request error or retreive infoBup
 function cbWriteSheet(err, infoVal, res, infoG3, callBack){
     if (err) { 
 		infoBup[infoBup.length] = infoG3;

@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const jsonInfo = "mailInfo.json";
 var transporter = null;
 var subject, toMail, userM, passW;
 
@@ -14,7 +15,7 @@ Mailer.initMailer = initM;
 function initM(mailer, PARAM_DIR) {
 	
 //console.log(process.env.MAIL + " Pass= " + process.env.INFO);
-  fs.readFile( PARAM_DIR + "mailInfo.json", function(err, jsonInfo) {  
+  fs.readFile( PARAM_DIR + jsonInfo, function(err, jsonInfo) {  
     if (err) {
 		console.log('Error reading mailInfo.json : ' + err.message);
     }else {
@@ -80,7 +81,7 @@ Mailer.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1
 return { url: modURL, Mbody: formattedBody };
 }
 
-Mailer.sendMessage = function( res, userName, userMail, bodyMess, url) {
+Mailer.sendMessage = function( res, userName, userMail, bodyMess, linkMess) {
 	// Message object
 	var message = {
 
@@ -103,7 +104,7 @@ Mailer.sendMessage = function( res, userName, userMail, bodyMess, url) {
 			//this.logFile('Message sent successfully to: ' + userMail + '! Server responded with: ' + info.response);
 			console.log('Server responded with "%s"', info.response);
 			if (res){
-				res.write('<h3 style="margin: 0;"><a target="_parent" href="' + url + '">Courriel envoyé</a></h3>');
+				res.write(linkMess);
 				res.end();  //JSON.stringify(infoVal)
 			}
 		}

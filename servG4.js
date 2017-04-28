@@ -274,24 +274,14 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 	sheets.spreadsheets.values.update(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
-			if (res){
-				//res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8' });
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
-				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
-			}
-			Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			confirmMail(res, InfoArr, Mdata);
 			}
 		});
 	}else{		// Append new
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
-			debugger;
-			if (res){
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
-				res.write('<h3 style="color: #AD8700; margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
-			}
-			Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, Mdata.url);
+			confirmMail(res, InfoArr, Mdata);
 			}
 		});
 	}	
@@ -302,7 +292,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
   }
 }
 
-// Manage request error or retreive infoBup
+// Manage request error or retreive infoBup after sheet update request
 function cbWriteSheet(err, infoVal, res, infoG3, callBack){
     if (err) { 
 		infoBup[infoBup.length] = infoG3;
@@ -310,6 +300,9 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
 		tl.logFile('Error cbWriteSheet: ' + err.message);
 		if (err.message == 'invalid_request')
 			getNewToken(res);  // For getting new TOKEN
+		else
+			if (res)
+				res.end("Error!");
 		return false;
     }else{  
 		tl.logFile(JSON.stringify(infoVal));
@@ -318,6 +311,15 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
 		return true;
 	}
 }  
+
+// Manage sheet update and send confirm email 
+function confirmMail(res, InfoArr, Mdata){
+	if (res){
+		res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+		res.write('<h3 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
+	}
+	Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, '<h3 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Courriel envoy&eacute;</a></h3>');	
+}
 
 /**
  * Get Sheet Info

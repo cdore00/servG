@@ -2,6 +2,9 @@
 // Google API server for Sheets (V4) and Gmail (V2)
 const http = require('http');
 const fs = require('fs');
+const qs = require('qs'); 
+const multipart = require('multiparty');
+const util = require('util');
 
 var ip;
 var url = require('url');
@@ -9,7 +12,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'https://rawgit.com/cdore00/lou/master/';
+var HOSTclient = 'http://cdore.no-ip.biz/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';
@@ -48,8 +51,11 @@ var subNod = 'nod/';
 			if (filePath == "listLog"){
 				tl.listLog2(req, res, Mailer.pass);
 			}else{
+			if (filePath == "sendImage"){
+				sendImage(url_parts.query, req, res);
+			}else{
 				res.end();
-			}
+			}}
 		}else{  // method == 'GET'
 		if (filePath == "newCode"){
 			getNewCode(req, res, url_parts);
@@ -63,6 +69,9 @@ var subNod = 'nod/';
 		}else{
 		if (filePath == "showLog"){
 			tl.showLog(readQuery(req), res, subWeb);
+		}else{
+		if (filePath == "sendImage"){
+			sendImage(url_parts.query, req, res);
 		}else{
 		if (filePath == "getRow"){
 			getSheetInfo(readQuery(req), res);
@@ -79,7 +88,7 @@ var subNod = 'nod/';
 					res.end("<h1>Received</h1>");
 				}
 			}
-		}}}}}
+		}}}}}}
 		} //Fin GET
 	});
 // Start server listening request
@@ -93,20 +102,24 @@ var subNod = 'nod/';
 
 
 // Parse received Request
-function readQuery(req){
-var url_parts = url.parse(req.url,true);
-var param = url_parts.query;
+function readQuery(req, query, img64){
+if (query){
+	var param = query;
+}else{
+	var url_parts = url.parse(req.url,true);
+	var param = url_parts.query;
+	console.log(url_parts.query);
+}
 var InfoArr = new Array();
 var M1 = new Array();
 var M3 = new Array();
-//console.log(url_parts);
+
 if (param.L1){
 	var M1info = param.L1.split("$"); 
 	var M3info = param.L3.split("$");
 	M1[M1.length] = M1info[0];
 	M3[M3.length] = M3info[0];
 }
-
 	if (req.headers['x-forwarded-for']) {
 		ip = req.headers['x-forwarded-for'].split(",")[0];
 	} else if (req.connection && req.connection.remoteAddress) {
@@ -115,7 +128,6 @@ if (param.L1){
 		ip = req.ip;
 	}//console.log("client IP is *********************" + ip);
 
-console.log(url_parts.query);
 InfoArr[InfoArr.length] = Date.now();
 InfoArr[InfoArr.length] = tl.getDateTime(); 
 InfoArr[InfoArr.length] = ip ;	
@@ -130,17 +142,17 @@ for (var j = 1; j < 4; j += 2) {  // Day 1 monday, day 3 = wednesday
 		tmpVal = ((tmpVal != null) ? tmpVal:"" );
 		if(typeof tmpVal == 'object'){  // Multiple value
 			for (var z = 0; z < tmpVal.length; z++) {
-				InfoArr[InfoArr.length] = tmpVal[z];
-				mailInfo(M1, M3, j, tmpVal[z]);
+				InfoArr[InfoArr.length] = decodeURIComponent(tmpVal[z]);
+				mailInfo(M1, M3, j, decodeURIComponent(tmpVal[z]));
 			}
 		}else{  // One value
-			InfoArr[InfoArr.length] = tmpVal;
-			mailInfo(M1, M3, j, tmpVal);
+			InfoArr[InfoArr.length] = decodeURIComponent(tmpVal);
+			mailInfo(M1, M3, j, decodeURIComponent(tmpVal));
 		}
 	}
 }
 
-return { InfoArr: InfoArr, m1: M1, m3: M3, m1info: param.L1, m3info: param.L3 };
+return { InfoArr: InfoArr, m1: M1, m3: M3, m1info: param.L1, m3info: param.L3, photo: img64 };
 }
 
 // Add choice for mail
@@ -153,6 +165,15 @@ if (valInfo){
 }
 }
 
+function parseQuery(info){
+var str = info;
+
+str = str.split(":").join("");
+str = str.split('&').join('","');
+str = str.split('=').join('":"');
+str = '{"' + str + '"}';
+return (JSON.parse(str));
+}
 
 /* Begin Google Sheet */
 var readline = require('readline');
@@ -253,6 +274,7 @@ function writeToSheet(infoG3, req, res, callBack) {
 var InfoArr = infoG3.InfoArr;
 var m1Info = infoG3.m1info;
 var m3Info = infoG3.m3info;
+var photo = infoG3.photo;
 var rangeInfo = infoG3.InfoArr[6];
 
 var infoVal = eval(JSON.stringify(infoG3.InfoArr));
@@ -273,14 +295,14 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		options.range = rangeInfo.substring(0, rangeInfo.indexOf(":")) ;
 	sheets.spreadsheets.values.update(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info, photo);
 			confirmMail(res, InfoArr, Mdata);
 			}
 		});
 	}else{		// Append new
 	sheets.spreadsheets.values.append(options, function(err, result) {
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
-			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info);
+			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info, photo);
 			confirmMail(res, InfoArr, Mdata);
 			}
 		});
@@ -316,9 +338,9 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
 function confirmMail(res, InfoArr, Mdata){
 	if (res){
 		res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
-		res.write('<h3 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h3>');
+		res.write('<h4 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Commande re&ccedil;ue.</a></h4>');
 	}
-	Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, '<h3 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Courriel envoy&eacute;</a></h3>');	
+	Mailer.sendMessage( res, InfoArr[3], InfoArr[5], Mdata.Mbody, '<h4 style="margin: 0;"><a target="_parent" href="' + Mdata.url + '">Courriel envoy&eacute;</a></h4>');	
 }
 
 /**
@@ -364,7 +386,7 @@ if (param.code != null){
 	console.log(req.headers.host + "   getNewCode= " + param.code);
 	authObj.getToken(param.code, function(err, token) {
 	  if (err) {
-		console.log('Error while trying to retrieve access token: ', err.message);
+		console.log('Error while trying to retrieve access token: ' + err.message);
 	  }else{
 	  laDate.setTime(token.expiry_date);
 	  authObj.credentials = token;
@@ -395,5 +417,61 @@ function loadinfoBup(iBup){
 	}
 }
 
+
+function sendImage(query, req, res){
+	var body = "";
+
+	req.on('data', function(chunk) {
+	var textChunk = chunk.toString();
+	body += textChunk;
+	//var jsonObj = JSON.parse(body);
+	});
+
+	req.on('end', function () {
+		var post = qs.parse(body);
+		console.log("Request received");
+		//tl.logFile(body);
+		parseReq(req, res, body);
+	});
+	
+	//tl.logFile(body);
+	res.statusCode = 200;
+	res.setHeader('Content-type', 'text/plain');
+
+}
+
+function parseReq(req, res, body){
+var arrAtt = new Array(); 
+var attStr = 'form-data; name=';
+
+body = body.replace("\r\n", "");
+
+var attPos = body.indexOf(attStr);
+do{
+	body = body.substring(attPos + attStr.length );
+	var attName = body.substring(1, body.indexOf('"',1));
+	body = body.substring(body.indexOf('"',1) + 1);
+	body = body.trim();
+	var attValue = body.substring(0, body.indexOf('--'));
+	attValue = attValue.trim();
+	arrAtt[arrAtt.length] = [attName, attValue];
+	var attPos = body.indexOf(attStr);
+} while (attPos > 0);
+
+if (arrAtt[1][0] == "queryInfo")
+	writeToSheet(readQuery(req,parseQuery(arrAtt[1][1]), arrAtt[2][1] ),req, res);
+else
+	mailImage(res, arrAtt);
+}
+
+function mailImage(res, infoArr){
+var imgBody = '<img src="' + infoArr[2][1] + '" />';
+	tl.logFile('sendImage to: ' + infoArr[1][1]);
+	//tl.logFile('sendImage to: ' + infoArr[2][1]);
+	Mailer.sendMessage( res, infoArr[0][1], infoArr[0][1], imgBody, '<h3 style="margin: 0;">Courriel envoy&eacute;</h3>');
+	console.log("Image sent by mail");
+	//sendMessage = function( res, userName, userMail, bodyMess, linkMess)
+//debugger;
+}
 
 /* END Google Sheet */

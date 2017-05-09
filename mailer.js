@@ -52,7 +52,7 @@ function initM(mailer, PARAM_DIR) {
 }
 // END define email transporter
 
-Mailer.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1arr, m3arr, m1Info, m3Info) {
+Mailer.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1arr, m3arr, m1Info, m3Info, photo) {
 	var formattedBody = "<p>Bonjour,</p><p>&nbsp;</p><p></br>Voici ma commande.</p><p>&nbsp;</p>";
 	if (m1arr.length > 1){
 		formattedBody += "<p>" + m1arr[0] + "</p><ul>";
@@ -77,6 +77,8 @@ Mailer.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1
 	formattedBody += "<p>&nbsp;</p><p>Merci,</p><p>" + userName + "</p><p>&nbsp;</p>";
 	var modURL = HOST + 'menu.html?rang=' + updRange + '$' + userMail + '$' + laDate + m1Info + m3Info ;
 	formattedBody += '<a href="' + modURL + '">Modifier ma commande</a>';
+	
+	formattedBody = '<div><div style="width:50%; float: left;">' + formattedBody + '</div><div style="width:50%; float: right;"><img src="' + photo + '" /></div></div>';
 
 return { url: modURL, Mbody: formattedBody };
 }

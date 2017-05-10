@@ -24,7 +24,7 @@ if (args[2] && args[2] == 3000){
 	hostURL = 'http://cdore.no-ip.biz/nod/';
 }else{
 	var port = 8080;
-	hostURL = 'https://sslgserver-googleserv.44fs.preview.openshiftapps.com/';
+	hostURL = 'https://googserv4-goog-server.1d35.starter-us-east-1.openshiftapps.com/';
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
 

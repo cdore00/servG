@@ -109,10 +109,10 @@ filePath = "https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=
 xhr.open("GET", filePath );
 	xhr.onloadend=function(){
 				//debugger;
-				res.setHeader('Content-type', 'text/html');
+				//res.setHeader('Content-type', 'text/html');
 				//res.write(xhr.responseXML);
-				res.end("Result: " + xhr.responseText);
-	    //console.log("HTTP res: " + xhr.responseText);
+				//res.end("Result: " + xhr.responseText);
+	    console.log("HTTP res: " + xhr.responseText);
 	}
 xhr.send();
 	

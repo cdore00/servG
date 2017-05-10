@@ -3,6 +3,7 @@
 const http = require('http');
 const fs = require('fs');
 const qs = require('qs'); 
+const multipart = require('multiparty');
 const util = require('util');
 
 var ip;
@@ -11,7 +12,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'https://cdore00.github.io/lou/';
+var HOSTclient = 'http://cdore.no-ip.biz/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';
@@ -24,7 +25,7 @@ if (args[2] && args[2] == 3000){
 	hostURL = 'http://cdore.no-ip.biz/nod/';
 }else{
 	var port = 8080;
-	hostURL = 'https://googserv4-goog-server.1d35.starter-us-east-1.openshiftapps.com/';
+	hostURL = 'https://sslgserver-googleserv.44fs.preview.openshiftapps.com/';
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
 
@@ -69,8 +70,8 @@ var subNod = 'nod/';
 		if (filePath == "showLog"){
 			tl.showLog(readQuery(req), res, subWeb);
 		}else{
-		if (filePath == "sendImage"){
-			sendImage(url_parts.query, req, res);
+		if (filePath == "sendReq"){
+			tl.getHTTP(url_parts.query, req, res);
 		}else{
 		if (filePath == "getRow"){
 			getSheetInfo(readQuery(req), res);

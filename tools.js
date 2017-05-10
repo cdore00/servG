@@ -104,13 +104,15 @@ var xhr = new XMLHttpRequest();
 
 exports.getHTTP = function (filePath, req, res){
 
-xhr.open("GET", filePath + "?_=" + new Date().getTime(), true);
+filePath = "https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets%20https%3A%2F%2Fmail.google.com%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send&response_type=code&client_id=425059252383-7ir1gosfrn60o59b3uvp8du7ehctlmdn.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fgoogserv4-goog-server.1d35.starter-us-east-1.openshiftapps.com%2F";
+
+xhr.open("GET", filePath );
 	xhr.onloadend=function(){
+				//debugger;
 				res.setHeader('Content-type', 'text/html');
 				//res.write(xhr.responseXML);
-				res.end(xhr.responseText);
-	    console.log("HTTP res: " + xhr.responseText);
-		debugger;
+				res.end("Result: " + xhr.responseText);
+	    //console.log("HTTP res: " + xhr.responseText);
 	}
 xhr.send();
 	

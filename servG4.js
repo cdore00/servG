@@ -11,7 +11,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'http://cdore.no-ip.biz/lou/';
+var HOSTclient = 'https://cdore00.github.io/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';
@@ -243,8 +243,9 @@ function getNewToken(res) {
 			if (res){
 				res.statusCode = 200;
 				res.setHeader('Content-type', 'text/html');
-				res.write(html);
+				//res.write(html);
 				res.end();
+				tl.getHTTP("", false, res);
 			}
 		}
 	});

@@ -227,12 +227,12 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
  * Get and store new token for user authorization
  */
 function getNewToken(res) {
-/**  var authUrl = authObj.generateAuthUrl({
+ var authUrl = authObj.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
   });
   tl.logFile('Authorize this app by visiting this url: ' + authUrl);   
- That allways same URL stoked in getCode.html */
+/**  That allways same URL stoked in getCode.html */
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);

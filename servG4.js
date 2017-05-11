@@ -11,7 +11,7 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'https://cdore00.github.io/lou/';
+var HOSTclient = 'http://cdore.no-ip.biz/lou/';
 //'cdore00.000webhostapp.com';
 //'http://cdore.no-ip.biz/lou/';
 //'https://rawgit.com/cdore00/lou/master/';
@@ -50,7 +50,7 @@ var subNod = 'nod/';
 			if (filePath == "listLog"){
 				tl.listLog2(req, res, Mailer.pass);
 			}else{
-			if (filePath == "sendImage"){
+			if (filePath == "commPic"){
 				sendImage(url_parts.query, req, res);
 			}else{
 				res.end();
@@ -73,7 +73,7 @@ var subNod = 'nod/';
 			tl.getHTTP(url_parts.query, req, res);
 		}else{
 		if (filePath == "getRow"){
-			getSheetInfo(readQuery(req), res);
+			getSheetInfo(req, res);
 		}else{
 		if (filePath == "app.js"){
 			writeToSheet(readQuery(req),req, res);
@@ -227,12 +227,12 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
  * Get and store new token for user authorization
  */
 function getNewToken(res) {
-/** var authUrl = authObj.generateAuthUrl({
+ var authUrl = authObj.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
   });
   tl.logFile('Authorize this app by visiting this url: ' + authUrl);   
-  That allways same URL stoked in getCode.html */
+/**  That allways same URL stoked in getCode.html */
 	fs.readFile('getCode.html', (err, html) => {
 		if(err){
 			tl.logFile(err.message);
@@ -345,28 +345,31 @@ function confirmMail(res, InfoArr, Mdata){
 /**
  * Get Sheet Info
  */
-function getSheetInfo(infoG3, res) {
-var InfoArr = infoG3.InfoArr;
-var infoVal = eval(JSON.stringify(infoG3.InfoArr));
+function getSheetInfo(req, res) {
+	var url_parts = url.parse(req.url,true);
+	var param = url_parts.query;
 
   try {
 	var sheets = google.sheets('v4');
 	var options = {
 	  auth: authObj,
 	  spreadsheetId: sheetID,
-	  range: InfoArr[2]
+	  range: param.range
 	};  
 	sheets.spreadsheets.values.get(options, function(err, result) {
 		//debugger;
     if (err) { 
 		console.log('Error getSheetInfo: ' + err.message);
-		getNewToken(res);  // For getting new TOKEN
+		if (err.message == 'invalid_request')
+			getNewToken(res);  // For getting new TOKEN
     }else{  
-		console.log("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
-		tl.logFile("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
+		//console.log("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
+		//tl.logFile("Lecture:" + InfoArr[2] + JSON.stringify(result.values));
 		res.statusCode = 200;
-		res.setHeader('Content-type', 'text/plain');
-		res.end(JSON.stringify(infoVal));
+		res.setHeader('Content-type', 'text/html');
+		//res.end(JSON.stringify(infoVal));
+		res.write('<h3 style="color: #AD8700">Connexion...</h3>');
+		res.end();
 	}
   });
   } catch (err) {

@@ -78,8 +78,9 @@ Mailer.formatMailData = function (HOST, laDate, userName, userMail, updRange, m1
 	var modURL = HOST + 'menu.html?rang=' + updRange + '$' + userMail + '$' + laDate + m1Info + m3Info ;
 	formattedBody += '<a href="' + modURL + '">Modifier ma commande</a>';
 	
-	formattedBody = '<div><div style="width:50%; float: left;">' + formattedBody + '</div><div style="width:50%; float: right;"><img src="' + photo + '" /></div></div>';
-
+	if (photo){
+	formattedBody = '<div><div style="float: right;"><img src="' + photo + '" /></div>' + formattedBody + '</div>';
+	}
 return { url: modURL, Mbody: formattedBody };
 }
 

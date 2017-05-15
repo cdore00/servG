@@ -11,10 +11,9 @@ var port = 3000;
 
 var hostname = '';
 var hostURL = '';
-var HOSTclient = 'http://cdore.no-ip.biz/lou/';
-//'cdore00.000webhostapp.com';
+var HOSTclient = 'https://cdore00.github.io/lou/';
 //'http://cdore.no-ip.biz/lou/';
-//'https://rawgit.com/cdore00/lou/master/';
+//'https://cdore00.github.io/lou/';
 //'http://192.168.2.10/lou/';
 // For hyperlink in mails ans user Web pages.
 
@@ -59,10 +58,6 @@ var subNod = 'nod/';
 		if (filePath == "newCode"){
 			getNewCode(req, res, url_parts);
 		}else{
-		if (filePath == "getHTTP"){
-			getHTTP("http://192.168.2.10/lou/v2.html", req, res);
-
-		}else{
 		if (filePath == "listLog"){
 			tl.listLog(res, subNod);
 		}else{
@@ -87,7 +82,7 @@ var subNod = 'nod/';
 					res.end("<h1>Received</h1>");
 				}
 			}
-		}}}}}}
+		}}}}}
 		} //Fin GET
 	});
 // Start server listening request
@@ -400,7 +395,9 @@ if (param.code != null){
 	  }
 	});
 }
+//debugger
 if (!saveBup){
+	console.log('FIN getNewCode');
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain');
 	res.end();

@@ -1,8 +1,7 @@
 // servG4.js 
 // Google API server for Sheets (V4) and Gmail (V2)
 const http = require('http');
-const fs = require('fs');
-const qs = require('qs'); 
+const fs = require('fs'); 
 const util = require('util');
 
 var ip;
@@ -427,7 +426,6 @@ function sendImage(query, req, res){
 	});
 
 	req.on('end', function () {
-		var post = qs.parse(body);
 		console.log("Request received");
 		//tl.logFile(body);
 		parseReq(req, res, body);
@@ -436,7 +434,6 @@ function sendImage(query, req, res){
 	//tl.logFile(body);
 	res.statusCode = 200;
 	res.setHeader('Content-type', 'text/plain');
-
 }
 
 function parseReq(req, res, body){

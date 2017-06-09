@@ -1,0 +1,61 @@
+<html>
+<head>
+
+<script type="text/javascript"> 
+<!--
+
+var windowOref = window;
+
+function init(){
+var urlcall = "https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets%20https%3A%2F%2Fmail.google.com%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send&response_type=code&client_id=425059252383-7ir1gosfrn60o59b3uvp8du7ehctlmdn.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fservg4-cd-serv.1d35.starter-us-east-1.openshiftapps.com%2F";
+document.location.href = urlcall ;
+}
+
+function callGoog(){
+alert("Ok");
+}
+
+function loadedIframe(ifr){
+alert("Frame loaded");
+}
+
+function Popup() {
+
+
+  windowOref = window.open("https://accounts.google.com/o/oauth2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets%20https%3A%2F%2Fmail.google.com%2F%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send&response_type=code&client_id=425059252383-7ir1gosfrn60o59b3uvp8du7ehctlmdn.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fservg4-cd-serv.1d35.starter-us-east-1.openshiftapps.com%2F",
+  "_blank","width=420,height=230,menubar=no,location=no,resizable=no,scrollbars=no,status=no");
+
+
+/*
+  windowOref = window.open("",
+  "_blank","width=420,height=230,menubar=no,location=no,resizable=no,scrollbars=no,status=no");
+  
+  windowOref.onload = callGoog;
+
+  windowOref.addEventListener("load", function(event) {
+    alert("All resources finished loading!");
+  }); 
+ windowOref.addEventListener(  'load', function(){alert("loaded")}, false);
+   windowOref.addEventListener('onload', function(){alert("loaded")}, false);
+   
+    //windowOref.location = "dra.html";
+	*/
+  x=5;
+}
+			
+// -->
+</script> 
+		
+</head>
+<body>
+<h3 style="color: #AD8700">Test frame</h3>
+
+<!--
+<iframe id="frameInfo" src="getCode.html" onload="loadedIframe(this); return false;">
+</iframe>
+// -->
+<button onclick="Popup()">Pop</button>
+
+
+</body>
+</html>

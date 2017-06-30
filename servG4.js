@@ -22,7 +22,7 @@ if (args[2] && args[2] == 3000){
 	hostURL = 'http://cdore.no-ip.biz/nod/';
 }else{
 	var port = 8080;
-	hostURL = 'https://servg4-cd-serv.1d35.starter-us-east-1.openshiftapps.com/';
+	hostURL = 'https://googserv4-goog-server.1d35.starter-us-east-1.openshiftapps.com/';
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
 
@@ -235,8 +235,9 @@ function getNewToken(res) {
 			console.log('getNewToken');
 			tl.logFile('getNewToken');
 			if (res){
-				res.statusCode = 200;
-				res.setHeader('Content-type', 'text/html');
+				//res.statusCode = 200;
+				//res.setHeader('Content-type', 'text/html');
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write(html);
 				res.end();
 			}
@@ -397,8 +398,9 @@ if (param.code != null){
 //debugger
 if (!saveBup){
 	console.log('FIN getNewCode');
-	res.statusCode = 200;
-	res.setHeader('Content-type', 'text/plain');
+	//res.statusCode = 200;
+	//res.setHeader('Content-type', 'text/plain');
+	res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 	res.end();
 }
 

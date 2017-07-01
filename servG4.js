@@ -237,7 +237,7 @@ function getNewToken(res) {
 			if (res){
 				//res.statusCode = 200;
 				//res.setHeader('Content-type', 'text/html');
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'X-Frame-Options' : 'ALLOW-FROM https://servg4-cd-serv.1d35.starter-us-east-1.openshiftapps.com/' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'X-Frame-Options' : 'ALLOW-FROM https://accounts.google.com/' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write(html);
 				res.end();
 			}

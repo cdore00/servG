@@ -78,7 +78,7 @@ var subNod = 'nod/';
 					getNewCode(req, res, url_parts)
 				else{  //Cancel unknow request
 					res.statusCode = 200;
-					res.end("<h1>Received V2</h1>");
+					res.end("<h1>Received V2.1</h1>");
 				}
 			}
 		}}}}}
@@ -237,7 +237,7 @@ function getNewToken(res) {
 			if (res){
 				//res.statusCode = 200;
 				//res.setHeader('Content-type', 'text/html');
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'X-Frame-Options' : 'ALLOW-FROM https://servg4-cd-serv.1d35.starter-us-east-1.openshiftapps.com/' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
 				res.write(html);
 				res.end();
 			}

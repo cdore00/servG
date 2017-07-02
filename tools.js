@@ -210,9 +210,10 @@ transporter.sendMail(message, (error, info) => {
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var xhr = new XMLHttpRequest();
 
-exports.getHTTP = function (filePath, req, res){
+exports.getHTTP = function (filePath, res){
 
-xhr.open("GET", filePath + "?_=" + new Date().getTime(), true);
+//xhr.open("GET", filePath + "?_=" + new Date().getTime(), true);
+xhr.open("GET", filePath , true);
 	xhr.onloadend=function(){
 				res.setHeader('Content-type', 'text/html');
 				//res.write(xhr.responseXML);

@@ -1,4 +1,4 @@
-// servG4.js 
+﻿// servG4.js 
 // Google API server for Sheets (V4) and Gmail (V2)
 const http = require('http');
 const fs = require('fs'); 
@@ -69,6 +69,9 @@ var subNod = 'nod/';
 		if (filePath == "getRow"){
 			getSheetInfo(req, res);
 		}else{
+		if (filePath == "checkToken"){
+			checkToken(res);
+		}else{
 		if (filePath == "app.js"){
 			writeToSheet(readQuery(req),req, res);
 			}else{ 
@@ -81,7 +84,7 @@ var subNod = 'nod/';
 					res.end("<h1>Received V2.1</h1>");
 				}
 			}
-		}}}}}
+		}}}}}}
 		} //Fin GET
 	});
 // Start server listening request
@@ -195,7 +198,7 @@ fs.readFile( PARAM_DIR + 'client_secret.json', function processClientSecrets(err
   var oauth2Client = new auth.OAuth2(cred.web.client_id, cred.web.client_secret, hostURL);
   var laDate = new Date();
   var auth2 = false;
-  
+
   authObj = oauth2Client;
 
   // Check if we have previously stored a token.
@@ -225,9 +228,11 @@ function getNewToken(res) {
     access_type: 'offline',
     scope: SCOPES
   });
-  tl.logFile('Authorize this app by visiting this url: ' + authUrl);   
+  tl.logFile('Authorize this app by visiting this url: ' + authUrl); 
+
 /**  That allways same URL stoked in getCode.html */
 	fs.readFile('getCode.html', (err, html) => {
+		 debugger;
 		if(err){
 			tl.logFile(err.message);
 			throw err;
@@ -237,12 +242,23 @@ function getNewToken(res) {
 			if (res){
 				//res.statusCode = 200;
 				//res.setHeader('Content-type', 'text/html');
-				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*', 'X-Frame-Options' : 'ALLOW-FROM https://accounts.google.com/' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
-				res.write(html);
-				res.end();
+				res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+				//res.write(html);
+				res.end(JSON.stringify({result: false}));
+				//returnRes(res, false);
 			}
 		}
 	});
+}
+
+function checkToken(res){
+var timeTO = authObj.credentials.expiry_date - Date.now();
+var oRes = {valid: false, time: timeTO};
+if (timeTO > 100000)
+	oRes.valid = true;
+
+res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+res.end(JSON.stringify(oRes));	
 }
 
 /**
@@ -291,6 +307,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info, photo);
 			confirmMail(res, InfoArr, Mdata);
+			
 			}
 		});
 	}else{		// Append new
@@ -298,6 +315,7 @@ var infoVal = eval(JSON.stringify(infoG3.InfoArr));
 		if (cbWriteSheet(err, infoVal, res, infoG3, callBack)){
 			var Mdata = Mailer.formatMailData(HOSTclient, InfoArr[1], InfoArr[3], InfoArr[5], escape(result.updates.updatedRange), infoG3.m1, infoG3.m3, m1Info, m3Info, photo);
 			confirmMail(res, InfoArr, Mdata);
+			//returnRes(res, InfoArr, Mdata, callBack);
 			}
 		});
 	}	
@@ -314,11 +332,13 @@ function cbWriteSheet(err, infoVal, res, infoG3, callBack){
 		infoBup[infoBup.length] = infoG3;
 		console.log('Error cbWriteSheet: ' + err.message);
 		tl.logFile('Error cbWriteSheet: ' + err.message);
-		if (err.message == 'invalid_request')
+		if (err.message == 'invalid_request'){
 			getNewToken(res);  // For getting new TOKEN
-		else
+		}else{
+			 debugger;
 			if (res)
 				res.end("Error!");
+		}
 		return false;
     }else{  
 		tl.logFile(JSON.stringify(infoVal));
@@ -408,6 +428,7 @@ if (!saveBup){
 
 // Pass cumulated requests waiting token
 function loadinfoBup(iBup){
+
 	if (iBup.length != 0){
 		iBup.splice(iBup.length-1, 1);
 	}
@@ -470,6 +491,49 @@ var imgBody = '<img src="' + infoArr[2][1] + '" />';
 	console.log("Image sent by mail");
 	//sendMessage = function( res, userName, userMail, bodyMess, linkMess)
 //debugger;
+}
+
+function returnRes(res, InfoArr, Mdata, callBack){
+	//debugger;
+if (!callBack){
+	var oRes = {result: true};
+}else{
+	var oRes = {result: false};
+}
+
+	if (res){
+		
+		if (InfoArr)
+			oRes.mail = InfoArr[5];
+		if (Mdata)
+			oRes.url = Mdata.url;
+		
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+		
+		if (!callBack){
+			res.end(JSON.stringify(oRes));
+		}else{
+			fs.readFile('newCode.html', (err, html) => {
+				if(err){
+					tl.logFile(err.message);
+					throw err;
+				}else{
+					console.log('returnRes');
+					tl.logFile('returnRes');
+					if (res){
+						var textHtml = html.toString('utf8');
+						res.writeHeader(200, { 'Content-Type': 'text/html; charset=utf-8', 'Access-Control-Allow-Origin' : '*' , 'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'});
+						textHtml.replace("%1", JSON.stringify(oRes));
+						debugger;
+						res.write(textHtml);
+						res.end();
+					}
+				}
+			});	
+		}
+	}
 }
 
 /* END Google Sheet */

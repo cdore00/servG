@@ -81,7 +81,7 @@ var subNod = 'nod/';
 					getNewCode(req, res, url_parts)
 				else{  //Cancel unknow request
 					res.statusCode = 200;
-					res.end("<h1>Received V2.1</h1>");
+					res.end("<h1>Received V2.2</h1>");
 				}
 			}
 		}}}}}}
